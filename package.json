@@ -1,0 +1,42 @@
+{
+  "name": "chitty",
+  "description": "ChatGPT in your TTY",
+  "version": "0.0.1",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "cli:chat": "tsx cli/chat.ts",
+    "cli:instruct": "tsx cli/instruct.ts",
+    "cli:list": "tsx cli/list.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Myers <hello@davidmyers.dev>",
+  "funding": "https://github.com/sponsors/davidmyersdev",
+  "homepage": "https://github.com/davidmyersdev/chitty",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidmyersdev/chitty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/davidmyersdev/chitty/issues"
+  },
+  "keywords": [
+    "chat",
+    "chatgpt",
+    "gpt",
+    "openai",
+    "terminal",
+    "tty"
+  ],
+  "sideEffects": false,
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "openai": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.1",
+    "dotenv": "^16.0.3",
+    "tsx": "^3.12.6"
+  }
+}
