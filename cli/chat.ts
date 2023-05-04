@@ -10,7 +10,8 @@ type Message = {
   name?: string,
 }
 
-const model = 'gpt-3.5-turbo'
+// const model = 'gpt-3.5-turbo'
+const model = 'gpt-4'
 const apiClient = api()
 const messages = <Message[]>[]
 
