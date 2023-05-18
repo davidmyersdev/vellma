@@ -11,7 +11,7 @@ const promptUserForInput = () => {
   prompt(async (answer) => {
     const completion = await apiClient.createCompletion({ model, prompt: answer })
 
-    writeFileSync(join(root, 'output', Date.now() + '.json'), JSON.stringify(completion.data, null, 2))
+    writeFileSync(join(root, 'output', `${Date.now()}.json`), JSON.stringify(completion.data, null, 2))
     console.log(completion.data)
 
     promptUserForInput()

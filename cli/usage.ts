@@ -1,9 +1,13 @@
-import { env } from '../src/env'
 import fetch from 'cross-fetch'
+import { env } from '../env'
 
-const date = '2023-05-04'
+const date = '2023-05-09'
 
-const { apiKey, organization, userId } = env()
+const {
+  apiKey,
+  // organization,
+  userId,
+} = env()
 
 try {
   const response = await fetch(`https://api.openai.com/v1/usage?date=${date}&user_public_id=${userId}`, {
@@ -11,11 +15,14 @@ try {
     headers: {
       'authorization': `Bearer ${apiKey}`,
       'content-type': 'application/json',
-      'openai-organization': organization,
+      // 'openai-organization': organization,
     },
   })
 
-  const { data: completions } = await response.json()
+  const data = await response.json()
+  const { data: completions } = data
+
+  // console.log(data)
 
   // Todo: Stop procratinating on adding types.
   const usage = completions.reduce((builder: any, completion: any) => {

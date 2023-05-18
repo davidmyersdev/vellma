@@ -1,4 +1,4 @@
-import readline from 'readline'
+import readline from 'node:readline'
 
 const reader = readline.createInterface(process.stdin, process.stdout)
 

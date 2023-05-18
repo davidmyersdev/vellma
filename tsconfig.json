@@ -5,7 +5,6 @@
     "declarationMap": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "jsx": "preserve",
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -17,5 +16,6 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "verbatimModuleSyntax": true
-  }
+  },
+  "include": ["./**/*.d.ts", "./**/*.ts"]
 }
