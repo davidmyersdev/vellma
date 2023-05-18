@@ -1,3 +1,3 @@
-# Chitty
+# `ellma`
 
-**Ch**atGPT **i**n your **TTY**
+Easy LLM Agents
