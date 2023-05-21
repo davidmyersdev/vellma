@@ -1,11 +1,10 @@
-import { terminal } from './adapters/terminal'
-
-export type Io = ReturnType<typeof io>
+import { terminalAdapter } from './adapters/terminal'
 
 export type IoAdapter = {
   read: () => Promise<string>,
   write: (text: string) => Promise<void>,
 }
+export type IoWrapper = ReturnType<typeof wrapIo>
 
 /**
  * Create an object for managing input and output. The adapter pattern used here allows inputs and outputs to be anything, including a terminal, a file, or a network socket.
@@ -13,9 +12,9 @@ export type IoAdapter = {
  * @param adapter The adapter to use for reading input and writing output. Defaults to `terminal()`.
  * @returns An Io object.
  */
-export const io = (adapter: IoAdapter = terminal()) => {
+export const wrapIo = (adapter: IoAdapter = terminalAdapter()) => {
   return {
-    prompt: prompt.bind(undefined, adapter),
+    prompt: promptWith.bind(undefined, adapter),
     read: adapter.read,
     write: adapter.write,
   }
@@ -28,7 +27,7 @@ export const io = (adapter: IoAdapter = terminal()) => {
  * @param question The text prompt to indicate to the user that input is expected. Defaults to `> `.
  * @returns The user input.
  */
-export const prompt = async (adapter: IoAdapter, question = '> ') => {
+export const promptWith = async (adapter: IoAdapter, question = '> ') => {
   await adapter.write(question)
 
   return await adapter.read()

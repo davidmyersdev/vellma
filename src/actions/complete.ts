@@ -2,14 +2,10 @@ import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
-import { type Io } from '../io'
+import { type Wrappers } from '../wrappers'
 import { root } from '../filesystem'
 
-export type CompleteOptions = {
-  io: Io,
-}
-
-export const complete = async ({ io }: CompleteOptions) => {
+export const complete = async ({ io }: Wrappers) => {
   const model = 'text-davinci-003'
   const {
     apiKey,
@@ -17,17 +13,14 @@ export const complete = async ({ io }: CompleteOptions) => {
     userId,
   } = env()
   const api = buildApiInstance({ apiKey, userId })
+  const answer = await io.prompt()
+  const { json: completion } = await api.complete({ model, prompt: answer })
 
-  while (true) {
-    const answer = await io.prompt()
-    const { json: completion } = await api.complete({ model, prompt: answer })
+  writeFileSync(join(root, 'output', `${Date.now()}.json`), JSON.stringify(completion, null, 2))
 
-    writeFileSync(join(root, 'output', `${Date.now()}.json`), JSON.stringify(completion, null, 2))
+  const { text } = completion.choices[0]
 
-    const { text } = completion.choices[0]
-
-    if (text) {
-      await io.write(text)
-    }
+  if (text) {
+    await io.write(`${text}\n\n`)
   }
 }

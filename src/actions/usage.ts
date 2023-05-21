@@ -2,7 +2,13 @@ import { buildApiInstance } from '../api'
 import { env } from '../../env'
 
 export const usage = async () => {
-  const date = '2023-05-09'
+  const timestamp = new Date()
+  // Capture a date in the format YYYY-MM-DD.
+  const [month, day, year] = timestamp.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).split('/')
+  // const date = `${year}-${month}-${day}`
+  const date = `2023-05-19`
+
+  console.log(date)
 
   const {
     apiKey,

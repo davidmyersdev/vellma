@@ -6,8 +6,9 @@ import { embed } from './actions/embed'
 import { models } from './actions/models'
 import { playground } from './actions/playground'
 import { usage } from './actions/usage'
-import { io } from './io'
-import { terminal } from './io/adapters/terminal'
+import { wrap } from './wrappers'
+import { fetchAdapter } from './wrappers/http/adapters/fetch'
+import { terminalAdapter } from './wrappers/io/adapters/terminal'
 
 const filterArgs = (args: string[]) => {
   if (args[0] === 'vite-node' && args[1] === '--script') {
@@ -19,7 +20,10 @@ const filterArgs = (args: string[]) => {
 
 export const cli = (args: string[]) => {
   const definition = cac('ellma')
-  const ioTerminal = io(terminal())
+  const wrappers = wrap({
+    http: fetchAdapter(),
+    io: terminalAdapter(),
+  })
 
   definition.version(version)
   definition.help()
@@ -30,15 +34,15 @@ export const cli = (args: string[]) => {
   })
 
   definition.command('chat').action(async (_options) => {
-    await chat({ io: ioTerminal })
+    await chat(wrappers)
   })
 
   definition.command('complete').action(async (_options) => {
-    await complete({ io: ioTerminal })
+    await complete(wrappers)
   })
 
   definition.command('embed').action(async (_options) => {
-    await embed({ io: ioTerminal })
+    await embed(wrappers)
   })
 
   definition.command('models').action(async (_options) => {

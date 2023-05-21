@@ -3,12 +3,8 @@ import { join } from 'node:path'
 import chalk from 'chalk'
 import { env } from '../../env'
 import { type ApiChatMessage, buildApiInstance } from '../api'
-import { type Io } from '../io'
+import { type Wrappers } from '../wrappers'
 import { root } from '../filesystem'
-
-export type ChatOptions = {
-  io: Io,
-}
 
 export const assistant = (content: string, name?: string) => {
   return {
@@ -34,7 +30,7 @@ export const system = (content: string, name?: string) => {
   } satisfies ApiChatMessage
 }
 
-export const chat = async ({ io }: ChatOptions) => {
+export const chat = async ({ io }: Wrappers) => {
   const model = 'gpt-3.5-turbo'
   // const model = 'gpt-4'
   const {
