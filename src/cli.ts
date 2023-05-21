@@ -2,7 +2,7 @@ import { cac } from 'cac'
 import { version } from '../package.json' assert { type: 'json' }
 import { chat } from './actions/chat'
 import { complete } from './actions/complete'
-import { embedding } from './actions/embedding'
+import { embed } from './actions/embed'
 import { models } from './actions/models'
 import { playground } from './actions/playground'
 import { usage } from './actions/usage'
@@ -37,8 +37,8 @@ export const cli = (args: string[]) => {
     await complete({ io: ioTerminal })
   })
 
-  definition.command('embedding').action(async (_options) => {
-    await embedding({ io: ioTerminal })
+  definition.command('embed').action(async (_options) => {
+    await embed({ io: ioTerminal })
   })
 
   definition.command('models').action(async (_options) => {

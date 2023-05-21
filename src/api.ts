@@ -86,7 +86,7 @@ export const buildApiInstance = ({ apiKey, organization, userId }: ApiOptions) =
         response,
       }
     },
-    embedding: async ({ input, model = 'text-embedding-ada-002', user }: ApiEmbeddingOptions) => {
+    embed: async ({ input, model = 'text-embedding-ada-002', user }: ApiEmbeddingOptions) => {
       const response = await fetch(`${baseUrl}/v1/embeddings`, buildPostRequest({ body: { input, model, user } })) as ApiResponse<CreateEmbeddingResponse>
       const json = await response.json() as CreateEmbeddingResponse
 

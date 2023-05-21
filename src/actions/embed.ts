@@ -10,7 +10,7 @@ export type EmbedOptions = {
   io: Io,
 }
 
-export const embedding = async ({ io }: EmbedOptions) => {
+export const embed = async ({ io }: EmbedOptions) => {
   const {
     apiKey,
     // organization,
@@ -23,9 +23,9 @@ export const embedding = async ({ io }: EmbedOptions) => {
 
   console.log(chalk.gray('Thinking...'))
 
-  const { json: embedding } = await api.embedding({ input })
+  const { json: embedding } = await api.embed({ input })
 
-  writeFileSync(join(root, 'output', `embedding-${Date.now()}.json`), JSON.stringify(embedding, null, 2))
+  writeFileSync(join(root, 'output', `embed-${Date.now()}.json`), JSON.stringify(embedding, null, 2))
 
   if (embedding.data) {
     await io.write(JSON.stringify(embedding.data, null, 2))
