@@ -34,9 +34,11 @@
     "chalk": "^5.2.0",
     "cross-fetch": "^3.1.5",
     "langchain": "^0.0.77",
+    "lodash": "^4.17.21",
     "openai": "^3.2.1"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.194",
     "@types/node": "^18.16.1",
     "cac": "^6.7.14",
     "dotenv": "^16.0.3",

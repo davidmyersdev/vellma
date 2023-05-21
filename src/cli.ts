@@ -4,7 +4,10 @@ import { chat } from './actions/chat'
 import { complete } from './actions/complete'
 import { embedding } from './actions/embedding'
 import { models } from './actions/models'
+import { playground } from './actions/playground'
 import { usage } from './actions/usage'
+import { io } from './io'
+import { terminal } from './io/adapters/terminal'
 
 const filterArgs = (args: string[]) => {
   if (args[0] === 'vite-node' && args[1] === '--script') {
@@ -16,6 +19,7 @@ const filterArgs = (args: string[]) => {
 
 export const cli = (args: string[]) => {
   const definition = cac('ellma')
+  const ioTerminal = io(terminal())
 
   definition.version(version)
   definition.help()
@@ -26,19 +30,23 @@ export const cli = (args: string[]) => {
   })
 
   definition.command('chat').action(async (_options) => {
-    await chat()
+    await chat({ io: ioTerminal })
   })
 
   definition.command('complete').action(async (_options) => {
-    await complete()
+    await complete({ io: ioTerminal })
   })
 
   definition.command('embedding').action(async (_options) => {
-    await embedding()
+    await embedding({ io: ioTerminal })
   })
 
   definition.command('models').action(async (_options) => {
     await models()
+  })
+
+  definition.command('playground').action(async (_options) => {
+    await playground()
   })
 
   definition.command('usage').action(async (_options) => {

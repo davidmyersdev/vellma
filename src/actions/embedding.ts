@@ -3,10 +3,14 @@ import { join } from 'node:path'
 import chalk from 'chalk'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
-import { prompt } from '../interface'
+import { type Io } from '../io'
 import { root } from '../filesystem'
 
-export const embedding = async () => {
+export type EmbedOptions = {
+  io: Io,
+}
+
+export const embedding = async ({ io }: EmbedOptions) => {
   const {
     apiKey,
     // organization,
@@ -15,7 +19,7 @@ export const embedding = async () => {
   const api = buildApiInstance({ apiKey, userId })
 
   // Todo: Add log helpers for agent, user, and system messages.
-  const input = await prompt(chalk.white('Please enter some text to create an embedding:\n'))
+  const input = await io.prompt(chalk.white('Please enter some text to create an embedding:\n'))
 
   console.log(chalk.gray('Thinking...'))
 
@@ -23,5 +27,7 @@ export const embedding = async () => {
 
   writeFileSync(join(root, 'output', `embedding-${Date.now()}.json`), JSON.stringify(embedding, null, 2))
 
-  console.log(embedding.data)
+  if (embedding.data) {
+    await io.write(JSON.stringify(embedding.data, null, 2))
+  }
 }
