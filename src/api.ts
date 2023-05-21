@@ -5,7 +5,7 @@ export type ApiOptions = { apiKey: string, organization?: string, userId?: strin
 export type ApiChatMessage = { content: string, role: 'assistant' | 'system' | 'user', name?: string }
 export type ApiChatOptions = { messages: ApiChatMessage[], model: string }
 export type ApiCompleteOptions = { model: string, prompt: string }
-export type ApiEmbeddingOptions = { input: string | string[], model: string, user?: string }
+export type ApiEmbeddingOptions = { input: string | string[], model?: string, user?: string }
 export type ApiMiddlewareFn = (arg: { data: ApiResponseData, response: Response }) => any
 export type ApiModerationOptions = { input: string, model: string }
 export type ApiResponse<T> = Response & { json: () => Promise<T> }

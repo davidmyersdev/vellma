@@ -2,6 +2,7 @@ import { cac } from 'cac'
 import { version } from '../package.json' assert { type: 'json' }
 import { chat } from './actions/chat'
 import { complete } from './actions/complete'
+import { embedding } from './actions/embedding'
 import { models } from './actions/models'
 import { usage } from './actions/usage'
 
@@ -30,6 +31,10 @@ export const cli = (args: string[]) => {
 
   definition.command('complete').action(async (_options) => {
     await complete()
+  })
+
+  definition.command('embedding').action(async (_options) => {
+    await embedding()
   })
 
   definition.command('models').action(async (_options) => {
