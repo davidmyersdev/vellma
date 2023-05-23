@@ -54,3 +54,7 @@ In order to keep this library flexible, while also maintaining reasonable defaul
 - Making HTTP requests to third-party APIs
 - Getting input from or displaying output to a user
 - Storing data permanently
+
+#### Example: Getting input from or displaying output to a user
+
+To better understand this concept, take a look at [the `io` implementation under `./src/wrappers`](./src/wrappers/io/index.ts). The adapter interface is defined by `IoAdapter` as an object that has two async function properties: `read` and `write`. The `terminal` adapter conforms to that interface, and the `wrapIo` wrapper maps the `terminal` adapter to the `IoWrapper` interface. This allows us to use the `IoWrapper` interface throughout the codebase without knowledge about specific implementations that end-users might choose to use. Additionally, we can expose helper methods in the wrapper that utilize the underlying adapter interface. The `prompt` method is an example of this.
