@@ -2,10 +2,10 @@ import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
-import { type Wrappers } from '../wrappers'
+import { type Peripherals } from '../peripherals'
 import { root } from '../filesystem'
 
-export const complete = async ({ io }: Wrappers) => {
+export const complete = async ({ io }: Peripherals) => {
   const model = 'text-davinci-003'
   const {
     apiKey,

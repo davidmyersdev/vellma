@@ -3,10 +3,10 @@ import { join } from 'node:path'
 import chalk from 'chalk'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
-import { type Wrappers } from '../wrappers'
+import { type Peripherals } from '../peripherals'
 import { root } from '../filesystem'
 
-export const embed = async ({ io }: Wrappers) => {
+export const embed = async ({ io }: Peripherals) => {
   const {
     apiKey,
     // organization,

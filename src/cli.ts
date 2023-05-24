@@ -4,11 +4,10 @@ import { chat } from './actions/chat'
 import { complete } from './actions/complete'
 import { embed } from './actions/embed'
 import { models } from './actions/models'
-import { playground } from './actions/playground'
 import { usage } from './actions/usage'
-import { wrap } from './wrappers'
-import { fetchAdapter } from './wrappers/http/adapters/fetch'
-import { terminalAdapter } from './wrappers/io/adapters/terminal'
+import { adapt } from './peripherals'
+import { fetchAdapter } from './peripherals/http/adapters/fetch'
+import { terminalAdapter } from './peripherals/io/adapters/terminal'
 
 const filterArgs = (args: string[]) => {
   if (args[0] === 'vite-node' && args[1] === '--script') {
@@ -20,7 +19,7 @@ const filterArgs = (args: string[]) => {
 
 export const cli = (args: string[]) => {
   const definition = cac('ellma')
-  const wrappers = wrap({
+  const peripherals = adapt({
     http: fetchAdapter(),
     io: terminalAdapter(),
   })
@@ -34,23 +33,19 @@ export const cli = (args: string[]) => {
   })
 
   definition.command('chat').action(async (_options) => {
-    await chat(wrappers)
+    await chat(peripherals)
   })
 
   definition.command('complete').action(async (_options) => {
-    await complete(wrappers)
+    await complete(peripherals)
   })
 
   definition.command('embed').action(async (_options) => {
-    await embed(wrappers)
+    await embed(peripherals)
   })
 
   definition.command('models').action(async (_options) => {
     await models()
-  })
-
-  definition.command('playground').action(async (_options) => {
-    await playground()
   })
 
   definition.command('usage').action(async (_options) => {

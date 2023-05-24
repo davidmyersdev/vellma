@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import chalk from 'chalk'
 import { env } from '../../env'
 import { type ApiChatMessage, buildApiInstance } from '../api'
-import { type Wrappers } from '../wrappers'
+import { type Peripherals } from '../peripherals'
 import { root } from '../filesystem'
 
 export const assistant = (content: string, name?: string) => {
@@ -30,7 +30,7 @@ export const system = (content: string, name?: string) => {
   } satisfies ApiChatMessage
 }
 
-export const chat = async ({ io }: Wrappers) => {
+export const chat = async ({ io }: Peripherals) => {
   const model = 'gpt-3.5-turbo'
   // const model = 'gpt-4'
   const {

@@ -49,12 +49,12 @@ Things are still early stage, but if you want to contribute, you'll need to unde
 
 ### Adapter pattern
 
-In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **wrapper** and the **adapter**. The wrapper should define the _internal_ interface that we will use throughout the codebase. The adapter should map that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
+In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **peripheral** and the **adapter**. The peripheral should define the _internal_ interface that we will use throughout the codebase. The adapter should map that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
 
-- Making HTTP requests to third-party APIs
+- Making HTTP requests
 - Getting input from or displaying output to a user
-- Storing data permanently
+- Storing data temporarily or permanently
 
 #### Example: Getting input from or displaying output to a user
 
-To better understand this concept, take a look at [the `io` implementation under `./src/wrappers`](./src/wrappers/io/index.ts). The adapter interface is defined by `IoAdapter` as an object that has two async function properties: `read` and `write`. The `terminal` adapter conforms to that interface, and the `wrapIo` wrapper maps the `terminal` adapter to the `IoWrapper` interface. This allows us to use the `IoWrapper` interface throughout the codebase without knowledge about specific implementations that end-users might choose to use. Additionally, we can expose helper methods in the wrapper that utilize the underlying adapter interface. The `prompt` method is an example of this.
+To better understand this concept, take a look at [the `io` implementation under `./src/peripherals`](./src/peripherals/io/index.ts). The adapter interface is defined by `IoAdapter` as an object that has two async function properties: `read` and `write`. The `terminal` adapter conforms to that interface, and the `adaptIo` peripheral maps the `terminal` adapter to the `IoPeripheral` interface. This allows us to use the `IoPeripheral` interface throughout the codebase without knowledge about specific implementations that end-users might choose to use. Additionally, we can expose helper functions in the peripheral that utilize the underlying adapter interface without requiring adapters to implement the function directly. The `prompt` function is one example that uses the `write` function to output something to a user followed by the `read` function to receive user input.
