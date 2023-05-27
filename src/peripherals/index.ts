@@ -5,6 +5,7 @@ export type PeripheralAdapters = {
   http: HttpAdapter,
   io: IoAdapter,
 }
+
 export type Peripherals = {
   http: HttpPeripheral,
   io: IoPeripheral,
