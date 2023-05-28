@@ -56,6 +56,14 @@
     "#data/models": "./src/data/models/index.ts",
     "#data/properties": "./src/data/properties/index.ts",
     "#data/*": "./src/data/*",
+    "#integrations": "./src/integrations/index.ts",
+    "#integrations/openai": "./src/integrations/openai/index.ts",
+    "#integrations/*": "./src/integrations/*",
+    "#models/chat": "./src/models/chat/index.ts",
+    "#models/*": "./src/models/*",
+    "#peripherals": "./src/peripherals/index.ts",
+    "#peripherals/http": "./src/peripherals/http/index.ts",
+    "#peripherals/storage": "./src/peripherals/storage/index.ts",
     "#peripherals/*": "./src/peripherals/*"
   }
 }
