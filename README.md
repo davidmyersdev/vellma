@@ -47,7 +47,7 @@ pnpm ellma chat
 
 Things are still early stage, but if you want to contribute, you'll need to understand a few concepts.
 
-### Adapter pattern
+### Peripherals
 
 In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **peripheral** and the **adapter**. The peripheral should define the _internal_ interface that we will use throughout the codebase. The adapter should map that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
 
@@ -58,3 +58,18 @@ In order to keep this library flexible, while also maintaining reasonable defaul
 #### Example: Getting input from or displaying output to a user
 
 To better understand this concept, take a look at [the `io` implementation under `./src/peripherals`](./src/peripherals/io/index.ts). The adapter interface is defined by `IoAdapter` as an object that has two async function properties: `read` and `write`. The `terminal` adapter conforms to that interface, and the `adaptIo` peripheral maps the `terminal` adapter to the `IoPeripheral` interface. This allows us to use the `IoPeripheral` interface throughout the codebase without knowledge about specific implementations that end-users might choose to use. Additionally, we can expose helper functions in the peripheral that utilize the underlying adapter interface without requiring adapters to implement the function directly. The `prompt` function is one example that uses the `write` function to output something to a user followed by the `read` function to receive user input.
+
+### Models
+
+These are the various types of AI models that we can use in our agents. Models are responsible for taking input and producing output. They can be used in a variety of ways, but they are typically used as the higher-level building blocks of an agent. For example, a model might be used to generate a response to a user's input, or it might be used to generate a new piece of content based on a given prompt. Some examples of this are:
+
+- Chat-based LLMs
+- Completion-based LLMs
+- Text-to-embedding transformers
+
+### Integrations
+
+These are the interfaces that allow us to communicate with third-party services. Integrations wrap the functionality of a third-party service so that we can use them in our models or even our peripherals. Some examples of this are:
+
+- OpenAI
+- PaLM 2
