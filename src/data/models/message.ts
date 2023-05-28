@@ -25,3 +25,19 @@ export const zHumanMessage = zMessage.extend({
 export const zSystemMessage = zMessage.extend({
   role: z.literal(zRole.enum.system).default(zRole.enum.system),
 })
+
+export const message = (thing: unknown): Message => {
+  return zMessage.parse(thing)
+}
+
+export const messages = {
+  assistant: (thing: unknown): Message => {
+    return zAssistantMessage.parse(thing)
+  },
+  human: (thing: unknown): Message => {
+    return zHumanMessage.parse(thing)
+  },
+  system: (thing: unknown): Message => {
+    return zSystemMessage.parse(thing)
+  },
+}
