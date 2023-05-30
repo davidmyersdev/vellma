@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { id, timestamp, zId, zTimestamp } from '#data'
+import { id, zId } from './id'
+import { timestamp, zTimestamp } from './timestamp'
 
 export type Embedding = z.infer<typeof zEmbedding>
 export type Vector = z.infer<typeof zVector>
