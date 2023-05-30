@@ -7,5 +7,3 @@ export const zRole = z.enum([
   'human',
   'system',
 ])
-
-export const roles = zRole.enum

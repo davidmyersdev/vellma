@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { id, timestamp, zId, zRole, zTimestamp } from '#data/properties'
+import { id, timestamp, zId, zRole, zTimestamp } from '#data'
 
 export type Message = z.infer<typeof zMessage>
 export type AssistantMessage = z.infer<typeof zAssistantMessage>
