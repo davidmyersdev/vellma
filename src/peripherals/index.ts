@@ -1,6 +1,6 @@
-import { type HttpAdapter, type HttpPeripheral, adaptHttp } from './http'
-import { type IoAdapter, type IoPeripheral, adaptIo } from './io'
-import { type StorageAdapter, type StoragePeripheral, adaptStorage } from './storage'
+import { type HttpAdapter, type HttpPeripheral, useHttp } from './http'
+import { type IoAdapter, type IoPeripheral, useIo } from './io'
+import { type StorageAdapter, type StoragePeripheral, useStorage } from './storage'
 
 export type PeripheralAdapters = {
   http: HttpAdapter,
@@ -14,10 +14,10 @@ export type Peripherals = {
   storage: StoragePeripheral,
 }
 
-export const usePeripherals = ({ http, io, storage }: Partial<PeripheralAdapters>) => {
+export const usePeripherals = ({ http, io, storage }: Partial<PeripheralAdapters>): Peripherals => {
   return {
-    http: adaptHttp(http),
-    io: adaptIo(io),
-    storage: adaptStorage(storage),
-  } satisfies Peripherals
+    http: useHttp(http),
+    io: useIo(io),
+    storage: useStorage(storage),
+  }
 }

@@ -5,7 +5,7 @@ export type StorageAdapter = {
   set: (key: unknown, data: unknown) => Promise<void>,
 }
 
-export type StoragePeripheral = ReturnType<typeof adaptStorage>
+export type StoragePeripheral = ReturnType<typeof useStorage>
 
 /**
  * Create an object for interacting with storage.
@@ -13,7 +13,7 @@ export type StoragePeripheral = ReturnType<typeof adaptStorage>
  * @param adapter The adapter to use for storing data. Defaults to `memoryAdapter()`.
  * @returns A StoragePeripheral object.
  */
-export const adaptStorage = (adapter: StorageAdapter = memoryAdapter()) => {
+export const useStorage = (adapter: StorageAdapter = memoryAdapter()) => {
   return {
     get: adapter.get,
     set: adapter.set,

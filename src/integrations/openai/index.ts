@@ -1,7 +1,7 @@
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { type OpenAiMessage } from './data'
 import { type Peripherals } from '#peripherals'
-import { adaptHttp } from '#peripherals/http'
+import { useHttp } from '#peripherals/http'
 
 export * from './data'
 
@@ -41,7 +41,7 @@ export const initOrUseIntegration = () => {
 
 }
 
-export const openaiIntegration = ({ apiKey, organization }: OpenAiConfig, { http = adaptHttp() }: Partial<Peripherals> = {}) => {
+export const openaiIntegration = ({ apiKey, organization }: OpenAiConfig, { http = useHttp() }: Partial<Peripherals> = {}) => {
   if (!apiKey) {
     throw new Error('The `apiKey` option is required.')
   }

@@ -6,9 +6,9 @@ export type ChatAdapter = {
   send: (messages: Message[]) => Promise<Message>,
 }
 
-export type ChatPeripheral = ReturnType<typeof adaptChat>
+export type ChatModel = ReturnType<typeof useChat>
 
-export const adaptChat = (adapter: ChatAdapter) => {
+export const useChat = (adapter: ChatAdapter) => {
   return {
     send: adapter.send,
   }
