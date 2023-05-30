@@ -16,6 +16,7 @@ export const chat = async (globals: Globals) => {
     chatMessages.push(humanMessage)
     chatMessages.push(assistantMessage)
 
+    // Todo: Expose an `io.color` (or similar) helper for modifying output in an agnostic way.
     await globals.peripherals.io.write(`\n${chalk.cyan('Agent:')}\n${assistantMessage.text}\n\n`)
   }
 }
