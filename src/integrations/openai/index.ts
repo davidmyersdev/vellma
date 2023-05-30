@@ -1,11 +1,13 @@
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
+import { type OpenAiMessage } from './data'
 import { type Peripherals } from '#peripherals'
 import { adaptHttp } from '#peripherals/http'
 
+export * from './data'
+
 export type OpenAiIntegration = ReturnType<typeof openaiIntegration>
-export type OpenAiIntegrationOptions = { apiKey: string, organization?: string }
-export type OpenAiApiChatMessage = { content: string, role: OpenAiApiChatRole, name?: string }
-export type OpenAiApiChatOptions = { messages: OpenAiApiChatMessage[], model: string }
+export type OpenAiConfig = { apiKey: string, organization?: string }
+export type OpenAiApiChatOptions = { messages: OpenAiMessage[], model: string }
 export type OpenAiApiChatRole = 'assistant' | 'system' | 'user'
 export type OpenAiApiCompleteOptions = { model: string, prompt: string }
 export type OpenAiApiEmbeddingOptions = { input: string | string[], model?: string, user?: string }
@@ -35,7 +37,11 @@ export type OpenAiApiUsageResponseEntry = {
 
 export const baseUrl = 'https://api.openai.com' as const
 
-export const openaiIntegration = ({ apiKey, organization }: OpenAiIntegrationOptions, { http = adaptHttp() }: Partial<Peripherals> = {}) => {
+export const initOrUseIntegration = () => {
+
+}
+
+export const openaiIntegration = ({ apiKey, organization }: OpenAiConfig, { http = adaptHttp() }: Partial<Peripherals> = {}) => {
   if (!apiKey) {
     throw new Error('The `apiKey` option is required.')
   }

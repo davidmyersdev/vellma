@@ -14,7 +14,7 @@ export type Peripherals = {
   storage: StoragePeripheral,
 }
 
-export const adapt = ({ http, io, storage }: Partial<PeripheralAdapters>) => {
+export const usePeripherals = ({ http, io, storage }: Partial<PeripheralAdapters>) => {
   return {
     http: adaptHttp(http),
     io: adaptIo(io),

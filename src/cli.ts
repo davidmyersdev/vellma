@@ -1,13 +1,13 @@
 import { cac } from 'cac'
+import { env } from '../env'
 import { version } from '../package.json' assert { type: 'json' }
 import { chat } from './actions/chat'
 import { complete } from './actions/complete'
 import { embed } from './actions/embed'
 import { models } from './actions/models'
 import { usage } from './actions/usage'
-import { adapt } from './peripherals'
-import { fetchAdapter } from './peripherals/http/adapters/fetch'
 import { terminalAdapter } from './peripherals/io/adapters/terminal'
+import { useGlobals } from '#config'
 
 const filterArgs = (args: string[]) => {
   if (args[0] === 'vite-node' && args[1] === '--script') {
@@ -19,9 +19,16 @@ const filterArgs = (args: string[]) => {
 
 export const cli = (args: string[]) => {
   const definition = cac('ellma')
-  const peripherals = adapt({
-    http: fetchAdapter(),
-    io: terminalAdapter(),
+  const { apiKey } = env()
+  const globals = useGlobals({
+    integrations: {
+      openai: {
+        apiKey,
+      },
+    },
+    peripherals: {
+      io: terminalAdapter(),
+    },
   })
 
   definition.version(version)
@@ -33,15 +40,15 @@ export const cli = (args: string[]) => {
   })
 
   definition.command('chat').action(async (_options) => {
-    await chat(peripherals)
+    await chat(globals)
   })
 
   definition.command('complete').action(async (_options) => {
-    await complete(peripherals)
+    await complete(globals)
   })
 
   definition.command('embed').action(async (_options) => {
-    await embed(peripherals)
+    await embed(globals)
   })
 
   definition.command('models').action(async (_options) => {

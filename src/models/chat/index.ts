@@ -1,4 +1,4 @@
-import { type Message } from '#data/models'
+import { type Message } from '#data'
 
 export * from './adapters'
 

@@ -2,10 +2,10 @@ import { writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
-import { type Peripherals } from '../peripherals'
 import { root } from '../filesystem'
+import { type Globals } from '#config'
 
-export const complete = async ({ io }: Peripherals) => {
+export const complete = async (globals: Globals) => {
   const model = 'text-davinci-003'
   const {
     apiKey,
@@ -13,7 +13,7 @@ export const complete = async ({ io }: Peripherals) => {
     userId,
   } = env()
   const api = buildApiInstance({ apiKey, userId })
-  const answer = await io.prompt()
+  const answer = await globals.peripherals.io.prompt()
   const { json: completion } = await api.complete({ model, prompt: answer })
 
   writeFileSync(join(root, 'output', `${Date.now()}.json`), JSON.stringify(completion, null, 2))
@@ -21,6 +21,6 @@ export const complete = async ({ io }: Peripherals) => {
   const { text } = completion.choices[0]
 
   if (text) {
-    await io.write(`${text}\n\n`)
+    await globals.peripherals.io.write(`${text}\n\n`)
   }
 }
