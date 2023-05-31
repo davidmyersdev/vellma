@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import { type Globals } from '#config'
+import { type Globals } from '#globals'
 import { type Message, messages } from '#data'
 import { openaiAdapter, useChat } from '#models/chat'
 

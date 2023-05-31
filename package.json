@@ -53,10 +53,10 @@
     "vite-node": "^0.30.1"
   },
   "imports": {
-    "#config": "./src/config/index.ts",
     "#data": "./src/data/index.ts",
     "#data/internal": "./src/data/internal/index.ts",
     "#data/*": "./src/data/*",
+    "#globals": "./src/globals/index.ts",
     "#integrations": "./src/integrations/index.ts",
     "#integrations/openai": "./src/integrations/openai/index.ts",
     "#integrations/*": "./src/integrations/*",

@@ -7,7 +7,7 @@ import { embed } from './actions/embed'
 import { models } from './actions/models'
 import { usage } from './actions/usage'
 import { terminalAdapter } from './peripherals/io/adapters/terminal'
-import { useGlobals } from '#config'
+import { useGlobals } from '#globals'
 
 const filterArgs = (args: string[]) => {
   if (args[0] === 'vite-node' && args[1] === '--script') {

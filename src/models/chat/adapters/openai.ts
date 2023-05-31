@@ -1,5 +1,5 @@
 import { type ChatAdapter } from '..'
-import { type Globals } from '#config'
+import { type Globals } from '#globals'
 
 // Todo: Combine models and properties into just "data" or maybe "schemas" for now.
 import { type Message, type Role, message as toMessage, zRole } from '#data'

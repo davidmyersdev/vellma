@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
 import { root } from '../filesystem'
-import { type Globals } from '#config'
+import { type Globals } from '#globals'
 
 export const complete = async (globals: Globals) => {
   const model = 'text-davinci-003'

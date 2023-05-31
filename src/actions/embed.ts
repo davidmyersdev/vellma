@@ -4,7 +4,7 @@ import chalk from 'chalk'
 import { buildApiInstance } from '../api'
 import { env } from '../../env'
 import { root } from '../filesystem'
-import { type Globals } from '#config'
+import { type Globals } from '#globals'
 
 export const embed = async (globals: Globals) => {
   const {
