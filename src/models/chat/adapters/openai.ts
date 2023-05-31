@@ -39,7 +39,7 @@ export const toInternalRole = (role: OpenAiRole): Role => {
 
 export const openaiAdapter = (globals: Globals): ChatAdapter => {
   return {
-    send: async (messages) => {
+    call: async (messages) => {
       const externalMessages = messages.map(toExternalMessage)
       // Todo: Add support for overriding the model.
       const { json } = await globals.integrations.openai.chat({ messages: externalMessages, model: 'gpt-3.5-turbo' })

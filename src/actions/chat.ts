@@ -5,13 +5,12 @@ import { openaiAdapter, useChat } from '#models/chat'
 
 export const chat = async (globals: Globals) => {
   const chatModel = useChat(openaiAdapter(globals))
-
   const chatMessages = <Message[]>[]
 
   while (true) {
     const humanAnswer = await globals.peripherals.io.prompt(chalk.green('You:\n'))
     const humanMessage = messages.human({ text: humanAnswer })
-    const assistantMessage = await chatModel.send([...chatMessages, humanMessage])
+    const assistantMessage = await chatModel.call([...chatMessages, humanMessage])
 
     chatMessages.push(humanMessage)
     chatMessages.push(assistantMessage)
