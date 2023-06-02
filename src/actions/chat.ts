@@ -1,10 +1,10 @@
 import chalk from 'chalk'
-import { type Globals } from '#globals'
 import { type Message, messages } from '#data'
-import { openaiAdapter, useChat } from '#models/chat'
+import { type Globals } from '#globals'
+import { useChat } from '#models/chat'
 
 export const chat = async (globals: Globals) => {
-  const chatModel = useChat(openaiAdapter(globals))
+  const chatModel = useChat(globals)
   const chatMessages = <Message[]>[]
 
   while (true) {

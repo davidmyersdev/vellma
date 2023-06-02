@@ -1,15 +1,28 @@
+import { openaiAdapter } from './adapters'
 import { type Message } from '#data'
-
-export * from './adapters'
+import { integrationNames } from '#data/internal'
+import { type Globals } from '#globals'
 
 export type ChatAdapter = {
   call: (messages: Message[]) => Promise<Message>,
 }
 
-export type ChatModel = ReturnType<typeof useChat>
+export type ChatIntegration = keyof typeof chatAdapters
 
-export const useChat = (adapter: ChatAdapter) => {
+export type ChatModel = ReturnType<typeof useChat>
+export type ChatModelConfig = {
+  integration?: ChatIntegration,
+}
+
+const chatAdapters = {
+  [integrationNames.openai]: openaiAdapter,
+}
+
+export const useChat = (globals: Globals) => {
+  const initAdapter = chatAdapters[globals.integration]
+  const chatAdapter = initAdapter(globals)
+
   return {
-    call: adapter.call,
+    call: chatAdapter.call,
   }
 }

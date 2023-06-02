@@ -60,6 +60,7 @@
     "#integrations": "./src/integrations/index.ts",
     "#integrations/openai": "./src/integrations/openai/index.ts",
     "#integrations/*": "./src/integrations/*",
+    "#models": "./src/models/index.ts",
     "#models/chat": "./src/models/chat/index.ts",
     "#models/*": "./src/models/*",
     "#peripherals": "./src/peripherals/index.ts",

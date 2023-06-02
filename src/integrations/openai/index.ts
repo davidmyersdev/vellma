@@ -6,7 +6,8 @@ import { useHttp } from '#peripherals/http'
 export * from './data'
 
 export type OpenAiIntegration = ReturnType<typeof openaiIntegration>
-export type OpenAiConfig = { apiKey: string, organization?: string }
+export type OpenAiIntegrationConfig = { apiKey: string, organization?: string }
+export type OpenAiConfig = OpenAiIntegrationConfig
 export type OpenAiApiChatOptions = { messages: OpenAiMessage[], model: string }
 export type OpenAiApiChatRole = 'assistant' | 'system' | 'user'
 export type OpenAiApiCompleteOptions = { model: string, prompt: string }
@@ -36,10 +37,6 @@ export type OpenAiApiUsageResponseEntry = {
 }
 
 export const baseUrl = 'https://api.openai.com' as const
-
-export const initOrUseIntegration = () => {
-
-}
 
 export const openaiIntegration = ({ apiKey, organization }: OpenAiConfig, { http = useHttp() }: Partial<Peripherals> = {}) => {
   if (!apiKey) {

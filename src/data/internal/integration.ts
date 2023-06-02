@@ -1,7 +1,7 @@
-import { z } from 'zod'
+export type IntegrationName = typeof openai
 
-export type IntegrationName = z.infer<typeof zIntegrationName>
+const openai = Symbol('openai')
 
-export const zIntegrationName = z.enum([
-  'openai',
-])
+export const integrationNames = {
+  openai,
+} as const
