@@ -18,9 +18,14 @@ const chatAdapters = {
   [integrationNames.openai]: openaiAdapter,
 }
 
+const useChatAdapter = (globals: Globals): ChatAdapter => {
+  const fn = chatAdapters[globals.integration]
+
+  return fn(globals)
+}
+
 export const useChat = (globals: Globals) => {
-  const initAdapter = chatAdapters[globals.integration]
-  const chatAdapter = initAdapter(globals)
+  const chatAdapter = useChatAdapter(globals)
 
   return {
     call: chatAdapter.call,

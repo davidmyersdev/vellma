@@ -47,7 +47,8 @@ export const useConfig = (config: PartialGlobalConfig): GlobalConfig => {
   }
 
   return {
-    integration: integrationNames.openai,
+    // Todo: Derive the integration from the supplied integrations list if an integration is not supplied.
+    integration: config.integration || integrationNames.openai,
     integrations: {
       openai: config.integrations.openai,
     },
