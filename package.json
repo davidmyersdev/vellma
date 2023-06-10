@@ -55,6 +55,7 @@
   "imports": {
     "#data": "./src/data/index.ts",
     "#data/internal": "./src/data/internal/index.ts",
+    "#data/utils": "./src/data/utils.ts",
     "#data/*": "./src/data/*",
     "#globals": "./src/globals/index.ts",
     "#integrations": "./src/integrations/index.ts",

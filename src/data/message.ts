@@ -32,7 +32,7 @@ export const message = (thing: unknown): Message => {
   return zMessage.parse(thing)
 }
 
-export const messages = {
+export const messageFactory = {
   assistant: (thing: unknown): Message => {
     return zAssistantMessage.parse(thing)
   },

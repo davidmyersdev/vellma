@@ -1,6 +1,6 @@
 import { type ChatModelConfig } from './chat'
 
-export { type ChatModelConfig }
+export * from './chat'
 
 export type ModelConfig = {
   chat: ChatModelConfig,

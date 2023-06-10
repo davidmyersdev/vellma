@@ -1,21 +1,20 @@
 import chalk from 'chalk'
-import { type Message, messages } from '#data'
+import { messageFactory } from '#data'
 import { type Globals } from '#globals'
-import { useChat } from '#models/chat'
+import { useChat } from '#models'
+
+const labelAssistant = chalk.cyan('Assistant:')
+const labelHuman = chalk.green('You:')
 
 export const chat = async (globals: Globals) => {
   const chatModel = useChat(globals)
-  const chatMessages = <Message[]>[]
+  const { io } = globals.peripherals
 
   while (true) {
-    const humanAnswer = await globals.peripherals.io.prompt(chalk.green('You:\n'))
-    const humanMessage = messages.human({ text: humanAnswer })
-    const assistantMessage = await chatModel.call([...chatMessages, humanMessage])
+    const humanAnswer = await io.prompt(`${labelHuman}\n`)
+    const humanMessage = messageFactory.human({ text: humanAnswer })
+    const assistantMessage = await chatModel.generate(humanMessage)
 
-    chatMessages.push(humanMessage)
-    chatMessages.push(assistantMessage)
-
-    // Todo: Expose an `io.color` (or similar) helper for modifying output in an agnostic way.
-    await globals.peripherals.io.write(`\n${chalk.cyan('Agent:')}\n${assistantMessage.text}\n\n`)
+    await io.write(`\n${labelAssistant}\n${assistantMessage.text}\n\n`)
   }
 }

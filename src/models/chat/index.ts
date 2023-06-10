@@ -25,9 +25,27 @@ const useChatAdapter = (globals: Globals): ChatAdapter => {
 }
 
 export const useChat = (globals: Globals) => {
-  const chatAdapter = useChatAdapter(globals)
+  const memory = <Message[]>[]
+  const adapter = useChatAdapter(globals)
 
   return {
-    call: chatAdapter.call,
+    add: async (message: Message) => {
+      memory.push(message)
+    },
+    clear: async () => {
+      memory.splice(0, memory.length)
+    },
+    generate: async (...messages: Message[]) => {
+      memory.push(...messages)
+
+      const message = await adapter.call([...memory])
+
+      memory.push(message)
+
+      return message
+    },
+    history: async () => {
+      return [...memory]
+    },
   }
 }
