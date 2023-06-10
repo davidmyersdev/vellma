@@ -23,7 +23,13 @@
     "tty"
   ],
   "sideEffects": false,
-  "main": "index.js",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "vite build",
     "ellma": "vite-node --script ./ellma.ts",
