@@ -1,4 +1,4 @@
-import { terminalAdapter } from './adapters/terminal'
+import { ioCallbacks } from './adapters/callbacks'
 
 export type IoAdapter = {
   read: () => Promise<string>,
@@ -10,10 +10,10 @@ export type IoPeripheral = ReturnType<typeof useIo>
 /**
  * Create an object for managing input and output. The adapter pattern used here allows inputs and outputs to be anything, including a terminal, a file, or a network socket.
  *
- * @param adapter The adapter to use for reading input and writing output. Defaults to `terminalAdapter()`.
+ * @param adapter The adapter to use for reading input and writing output. Defaults to `ioCallbacks()`.
  * @returns An IoPeripheral object.
  */
-export const useIo = (adapter: IoAdapter = terminalAdapter()) => {
+export const useIo = (adapter: IoAdapter = ioCallbacks()) => {
   return {
     prompt: async (question = '> ') => {
       await adapter.write(question)

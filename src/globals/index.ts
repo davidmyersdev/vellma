@@ -3,7 +3,7 @@ import { type IntegrationInitializers, type Integrations, type OpenAiIntegration
 import { type ChatModelConfig, type ModelConfig } from '#models'
 import { type PeripheralAdapters, type Peripherals, usePeripherals } from '#peripherals'
 import { fetchAdapter } from '#peripherals/http/adapters/fetch.ts'
-import { terminalAdapter } from '#peripherals/io/adapters/terminal.ts'
+import { ioCallbacks } from '#peripherals/io/adapters/callbacks.ts'
 import { memoryAdapter } from '#peripherals/storage/adapters/memory.ts'
 
 export type GlobalConfig = {
@@ -57,7 +57,7 @@ export const useConfig = (config: PartialGlobalConfig): GlobalConfig => {
     },
     peripherals: {
       http: config.peripherals?.http || fetchAdapter(),
-      io: config.peripherals?.io || terminalAdapter(),
+      io: config.peripherals?.io || ioCallbacks(),
       storage: config.peripherals?.storage || memoryAdapter(),
     },
   }
@@ -76,7 +76,7 @@ export const useGlobals = (partialConfig: PartialGlobalConfig): Globals => {
     models: config.models,
     peripherals: usePeripherals({
       http: config.peripherals.http || fetchAdapter(),
-      io: config.peripherals.io || terminalAdapter(),
+      io: config.peripherals.io || ioCallbacks(),
       storage: config.peripherals.storage || memoryAdapter(),
     }),
   }

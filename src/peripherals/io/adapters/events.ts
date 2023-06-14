@@ -9,7 +9,7 @@ export const ioEventEmitter = () => {
 /**
  * A utility that returns an IO adapter that uses events to communicate reads and writes.
  *
- * @param eventEmitter The prompt to indicate to the user that input is expected. Defaults to `new EventEmitter()`.
+ * @param eventEmitter The event emitter that reads and writes are fired on. Defaults to `new EventEmitter()`.
  * @returns An IO adapter that uses events to communicate reads and writes.
  */
 export const ioEvents = (eventEmitter = ioEventEmitter()): IoAdapter => {
