@@ -22,7 +22,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      ellma: join(root, '../src'),
+      '#data': join(root, './src/data'),
+      '#globals': join(root, './src/globals'),
+      '#models': join(root, './src/models'),
+      'ellma': root,
     },
   },
   root,

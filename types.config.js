@@ -1,6 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'rollup'
+import alias from '@rollup/plugin-alias'
 import dts from 'rollup-plugin-dts'
 
 const root = dirname(fileURLToPath(import.meta.url))
@@ -15,6 +16,22 @@ export default defineConfig({
     format: 'es',
   },
   plugins: [
+    alias({
+      entries: [
+        {
+          find: '#data',
+          replacement: join(root, './src/data'),
+        },
+        {
+          find: '#globals',
+          replacement: join(root, './src/globals'),
+        },
+        {
+          find: '#models',
+          replacement: join(root, './src/models'),
+        },
+      ],
+    }),
     dts(),
   ],
 })

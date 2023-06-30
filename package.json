@@ -83,6 +83,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^5.0.0",
     "@types/events": "^3.0.0",
     "@types/lodash": "^4.14.194",
     "@types/node": "^18.16.1",
@@ -99,15 +100,5 @@
     "vite": "^4.3.3",
     "vite-node": "^0.30.1",
     "vite-plugin-externalize-deps": "^0.7.0"
-  },
-  "imports": {
-    "#data": "./src/data/index.ts",
-    "#data/internal": "./src/data/internal/index.ts",
-    "#data/utils": "./src/data/utils.ts",
-    "#data/*": "./src/data/*",
-    "#globals": "./src/globals/index.ts",
-    "#models": "./src/models/index.ts",
-    "#models/chat": "./src/models/chat/index.ts",
-    "#models/*": "./src/models/*"
   }
 }
