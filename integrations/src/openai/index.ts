@@ -1,7 +1,7 @@
+import { type Peripherals } from 'ellma/peripherals'
+import { useHttp } from 'ellma/peripherals/http'
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { type OpenAiMessage } from './data'
-import { type Peripherals } from '#peripherals'
-import { useHttp } from '#peripherals/http'
 
 export * from './data'
 

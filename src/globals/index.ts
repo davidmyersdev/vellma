@@ -1,5 +1,5 @@
+import { type IntegrationInitializers, type Integrations, type OpenAiIntegrationConfig, useIntegrations } from 'ellma/integrations'
 import { type IntegrationName, integrationNames } from '#data/internal'
-import { type IntegrationInitializers, type Integrations, type OpenAiIntegrationConfig, useIntegrations } from '#integrations'
 import { type ChatModelConfig, type ModelConfig } from '#models'
 import { type PeripheralAdapters, type Peripherals, usePeripherals } from '#peripherals'
 import { fetchAdapter } from '#peripherals/http/adapters/fetch.ts'

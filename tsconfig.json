@@ -1,15 +1,24 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "declaration": true,
+    "declarationDir": "./dist",
+    "emitDeclarationOnly": true,
     "isolatedModules": true,
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "paths": {
+      "ellma": ["."],
+      "ellma/integrations": ["./integrations/src"],
+      "ellma/integrations/*": ["./integrations/src/*"],
+      "ellma/*": ["./src/*"]
+    },
     "resolveJsonModule": true,
+    "rootDir": ".",
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",

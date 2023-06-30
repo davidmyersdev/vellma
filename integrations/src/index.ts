@@ -1,5 +1,5 @@
+import { type integrationNames } from 'ellma/data/internal'
 import { type OpenAiIntegration, type OpenAiIntegrationConfig, openaiIntegration } from './openai'
-import { type integrationNames } from '#data/internal'
 
 export * from './openai'
 

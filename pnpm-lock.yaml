@@ -64,8 +64,8 @@ devDependencies:
     specifier: ^0.30.1
     version: 0.30.1(@types/node@18.16.1)
   vite-plugin-externalize-deps:
-    specifier: ^0.6.0
-    version: 0.6.0(vite@4.3.3)
+    specifier: ^0.7.0
+    version: 0.7.0(vite@4.3.3)
 
 packages:
 
@@ -3159,8 +3159,8 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-externalize-deps@0.6.0(vite@4.3.3):
-    resolution: {integrity: sha512-9N3jQl15qqKT6okPsKDQi7KuoSW2NFUT/dsQ1cyW35B2bsnP7t1IDRkBSC20cjDYLklm4giaHzfIY8Wa9IysRQ==}
+  /vite-plugin-externalize-deps@0.7.0(vite@4.3.3):
+    resolution: {integrity: sha512-do2gPrR79Tm8UKcqsw3RTAtN4YO8GkVRBckWdJWINZ3Qdp3KN9S1oyUZxKszTB/iyg4zdOUweLOeBI8t86QVow==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0 || ^4.0.0
     dependencies:

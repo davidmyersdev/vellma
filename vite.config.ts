@@ -1,5 +1,9 @@
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vite'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
+
+const root = dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   build: {
@@ -10,6 +14,16 @@ export default defineConfig({
     },
   },
   plugins: [
-    externalizeDeps(),
+    externalizeDeps({
+      include: [
+        /^ellma(?:\/.*)?/,
+      ],
+    }),
   ],
+  resolve: {
+    alias: {
+      ellma: join(root, '../src'),
+    },
+  },
+  root,
 })

@@ -35,7 +35,11 @@
     }
   },
   "scripts": {
-    "build": "vite build",
+    "build": "run-p build:core build:integrations && run-p build:core:types build:integrations:types",
+    "build:core": "vite build",
+    "build:core:types": "tsc",
+    "build:integrations": "vite build ./integrations",
+    "build:integrations:types": "tsc -p ./integrations/tsconfig.json",
     "ellma": "vite-node --script ./ellma.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
@@ -64,7 +68,7 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.3",
     "vite-node": "^0.30.1",
-    "vite-plugin-externalize-deps": "^0.6.0"
+    "vite-plugin-externalize-deps": "^0.7.0"
   },
   "imports": {
     "#data": "./src/data/index.ts",
@@ -72,9 +76,6 @@
     "#data/utils": "./src/data/utils.ts",
     "#data/*": "./src/data/*",
     "#globals": "./src/globals/index.ts",
-    "#integrations": "./src/integrations/index.ts",
-    "#integrations/openai": "./src/integrations/openai/index.ts",
-    "#integrations/*": "./src/integrations/*",
     "#models": "./src/models/index.ts",
     "#models/chat": "./src/models/chat/index.ts",
     "#models/*": "./src/models/*",

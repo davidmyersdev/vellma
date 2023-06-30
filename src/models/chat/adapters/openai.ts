@@ -1,9 +1,9 @@
+import { type OpenAiConfig, type OpenAiIntegration, type OpenAiMessage, type OpenAiRole } from 'ellma/integrations/openai'
 import { type ChatAdapter } from '..'
 import { type Globals } from '#globals'
 
 // Todo: Combine models and properties into just "data" or maybe "schemas" for now.
 import { type Message, type Role, message as toMessage, zRole } from '#data'
-import { type OpenAiConfig, type OpenAiIntegration, type OpenAiMessage, type OpenAiRole } from '#integrations/openai'
 
 export type OpenAiAdapterConfig = { openai: OpenAiIntegration, config?: OpenAiConfig } | { config: OpenAiConfig, openai?: OpenAiIntegration }
 
