@@ -1,10 +1,10 @@
 {
   "name": "ellma",
-  "type": "module",
   "version": "0.1.4",
   "description": "Easy LLM Agents",
-  "author": "David Myers <hello@davidmyers.dev>",
   "license": "MIT",
+  "author": "David Myers <hello@davidmyers.dev>",
+  "type": "module",
   "funding": "https://github.com/sponsors/davidmyersdev",
   "homepage": "https://github.com/davidmyersdev/ellma",
   "repository": {
@@ -16,34 +16,51 @@
   },
   "files": [
     "dist",
-    "dist/**/*"
+    "dist/**/*",
+    "integrations",
+    "integrations/**/*"
   ],
   "keywords": [
     "chat",
     "chatgpt",
     "gpt",
+    "langchain",
+    "language-models",
+    "llm",
     "openai",
     "terminal",
     "tty"
   ],
   "sideEffects": false,
+  "types": "./dist/index.d.ts",
   "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
+    },
+    "./integrations": {
+      "types": "./integrations/dist/index.d.ts",
+      "import": "./integrations/dist/index.js",
+      "require": "./integrations/dist/index.cjs"
     }
   },
   "scripts": {
-    "build": "run-p build:core build:integrations && run-p build:core:types build:integrations:types",
+    "build": "run-s clean && run-p build:* && run-s types",
     "build:core": "vite build",
-    "build:core:types": "tsc",
     "build:integrations": "vite build ./integrations",
-    "build:integrations:types": "tsc -p ./integrations/tsconfig.json",
+    "clean": "run-p clean:*",
+    "clean:core": "rimraf ./dist ./types",
+    "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
     "ellma": "vite-node --script ./ellma.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "types": "tsc && run-p types:*",
+    "types:core": "rollup -c ./types.config.js",
+    "types:integrations": "rollup -c ./integrations/types.config.js"
   },
   "dependencies": {
     "chalk": "^5.2.0",
@@ -64,6 +81,9 @@
     "eslint": "^8.40.0",
     "eslint-config-artisan": "^0.2.1",
     "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.1",
+    "rollup": "^3.25.3",
+    "rollup-plugin-dts": "^5.3.0",
     "type-hype": "^0.1.0",
     "typescript": "^5.0.4",
     "vite": "^4.3.3",
