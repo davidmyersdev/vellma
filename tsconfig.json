@@ -15,6 +15,8 @@
       "ellma": ["."],
       "ellma/integrations": ["./integrations/src"],
       "ellma/integrations/*": ["./integrations/src/*"],
+      "ellma/peripherals": ["./peripherals/src"],
+      "ellma/peripherals/*": ["./peripherals/src/*"],
       "ellma/*": ["./src/*"]
     },
     "resolveJsonModule": true,

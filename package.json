@@ -18,7 +18,9 @@
     "dist",
     "dist/**/*",
     "integrations",
-    "integrations/**/*"
+    "integrations/**/*",
+    "peripherals",
+    "peripherals/**/*"
   ],
   "keywords": [
     "chat",
@@ -45,22 +47,30 @@
       "types": "./integrations/dist/index.d.ts",
       "import": "./integrations/dist/index.js",
       "require": "./integrations/dist/index.cjs"
+    },
+    "./peripherals": {
+      "types": "./peripherals/dist/index.d.ts",
+      "import": "./peripherals/dist/index.js",
+      "require": "./peripherals/dist/index.cjs"
     }
   },
   "scripts": {
     "build": "run-s clean && run-p build:* && run-s types",
     "build:core": "vite build",
     "build:integrations": "vite build ./integrations",
+    "build:peripherals": "vite build ./peripherals",
     "clean": "run-p clean:*",
     "clean:core": "rimraf ./dist ./types",
     "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
+    "clean:peripherals": "rimraf ./peripherals/dist ./peripherals/types",
     "ellma": "vite-node --script ./ellma.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "types": "tsc && run-p types:*",
     "types:core": "rollup -c ./types.config.js",
-    "types:integrations": "rollup -c ./integrations/types.config.js"
+    "types:integrations": "rollup -c ./integrations/types.config.js",
+    "types:peripherals": "rollup -c ./peripherals/types.config.js"
   },
   "dependencies": {
     "chalk": "^5.2.0",
@@ -98,10 +108,6 @@
     "#globals": "./src/globals/index.ts",
     "#models": "./src/models/index.ts",
     "#models/chat": "./src/models/chat/index.ts",
-    "#models/*": "./src/models/*",
-    "#peripherals": "./src/peripherals/index.ts",
-    "#peripherals/http": "./src/peripherals/http/index.ts",
-    "#peripherals/storage": "./src/peripherals/storage/index.ts",
-    "#peripherals/*": "./src/peripherals/*"
+    "#models/*": "./src/models/*"
   }
 }

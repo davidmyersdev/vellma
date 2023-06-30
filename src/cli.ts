@@ -1,4 +1,5 @@
 import { cac } from 'cac'
+import { terminalAdapter } from 'ellma/peripherals/io/adapters/terminal'
 import { env } from '../env'
 import { version } from '../package.json' assert { type: 'json' }
 import { chat } from './actions/chat'
@@ -6,7 +7,6 @@ import { complete } from './actions/complete'
 import { embed } from './actions/embed'
 import { models } from './actions/models'
 import { usage } from './actions/usage'
-import { terminalAdapter } from './peripherals/io/adapters/terminal'
 import { useGlobals } from '#globals'
 
 const filterArgs = (args: string[]) => {

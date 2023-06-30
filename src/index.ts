@@ -1,4 +1,4 @@
 export * from '#data'
 export * from '#globals'
 export * from '#models'
-export * from '#peripherals'
+export * from 'ellma/peripherals'
