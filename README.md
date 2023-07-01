@@ -1,6 +1,6 @@
 # `ellma`
 
-Easy LLM Agents
+Easy LLM Assistants
 
 ## How to use `ellma`
 

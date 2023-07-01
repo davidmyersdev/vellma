@@ -1,7 +1,7 @@
 {
   "name": "ellma",
   "version": "0.1.4",
-  "description": "Easy LLM Agents",
+  "description": "Easy LLM Assistants",
   "license": "MIT",
   "author": "David Myers <hello@davidmyers.dev>",
   "type": "module",
