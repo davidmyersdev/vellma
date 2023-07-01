@@ -26,10 +26,6 @@ export default defineConfig({
           find: '#globals',
           replacement: join(root, './src/globals'),
         },
-        {
-          find: '#models',
-          replacement: join(root, './src/models'),
-        },
       ],
     }),
     dts(),

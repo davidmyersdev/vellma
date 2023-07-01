@@ -8,10 +8,11 @@ const root = dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   build: {
     lib: {
-      entry: 'src/index.ts',
+      entry: './src/index.ts',
       fileName: 'index',
       formats: ['cjs', 'es'],
     },
+    outDir: './dist',
   },
   plugins: [
     externalizeDeps({
@@ -22,11 +23,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '#data': join(root, './src/data'),
-      '#globals': join(root, './src/globals'),
-      'ellma/integrations': join(root, './integrations/src'),
-      'ellma/models': join(root, './models/src'),
-      'ellma/peripherals': join(root, './peripherals/src'),
+      ellma: join(root, '../src'),
     },
   },
   root,

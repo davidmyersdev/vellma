@@ -1,7 +1,7 @@
 import chalk from 'chalk'
+import { useChat } from 'ellma/models'
 import { messageFactory } from '#data'
 import { type Globals } from '#globals'
-import { useChat } from '#models'
 
 const labelAssistant = chalk.cyan('Assistant:')
 const labelHuman = chalk.green('You:')

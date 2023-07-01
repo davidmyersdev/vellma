@@ -1,10 +1,10 @@
 import { type IntegrationInitializers, type Integrations, type OpenAiIntegrationConfig, useIntegrations } from 'ellma/integrations'
+import { type ChatModelConfig, type ModelConfig } from 'ellma/models'
 import { type PeripheralAdapters, type Peripherals, usePeripherals } from 'ellma/peripherals'
 import { fetchAdapter } from 'ellma/peripherals/http/adapters/fetch'
 import { ioCallbacks } from 'ellma/peripherals/io/adapters/callbacks'
 import { memoryAdapter } from 'ellma/peripherals/storage/adapters/memory'
 import { type IntegrationName, integrationNames } from '#data/internal'
-import { type ChatModelConfig, type ModelConfig } from '#models'
 
 export type GlobalConfig = {
   integration: IntegrationName,

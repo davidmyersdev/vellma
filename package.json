@@ -17,10 +17,15 @@
   "files": [
     "dist",
     "dist/**/*",
-    "integrations",
-    "integrations/**/*",
-    "peripherals",
-    "peripherals/**/*"
+    "integrations/dist",
+    "integrations/dist/**/*",
+    "integrations/package.json",
+    "models/dist",
+    "models/dist/**/*",
+    "models/package.json",
+    "peripherals/dist",
+    "peripherals/dist/**/*",
+    "peripherals/package.json"
   ],
   "keywords": [
     "chat",
@@ -47,6 +52,11 @@
       "types": "./integrations/dist/index.d.ts",
       "import": "./integrations/dist/index.js",
       "require": "./integrations/dist/index.cjs"
+    },
+    "./models": {
+      "types": "./models/dist/index.d.ts",
+      "import": "./models/dist/index.js",
+      "require": "./models/dist/index.cjs"
     },
     "./peripherals": {
       "types": "./peripherals/dist/index.d.ts",

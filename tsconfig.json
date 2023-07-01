@@ -16,11 +16,11 @@
       "#data/*": ["./src/data/*"],
       "#globals": ["./src/globals"],
       "#globals/*": ["./src/globals/*"],
-      "#models": ["./src/models"],
-      "#models/*": ["./src/models/*"],
       "ellma": ["."],
       "ellma/integrations": ["./integrations/src"],
       "ellma/integrations/*": ["./integrations/src/*"],
+      "ellma/models": ["./models/src"],
+      "ellma/models/*": ["./models/src/*"],
       "ellma/peripherals": ["./peripherals/src"],
       "ellma/peripherals/*": ["./peripherals/src/*"],
       "ellma/*": ["./src/*"]
