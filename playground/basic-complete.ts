@@ -11,10 +11,7 @@ const io = useIo(ioTerminal())
 // Completion loop
 while (true) {
   const prompt = await io.prompt(chalk.green('Prompt: '))
-
-  await io.write(`${chalk.cyan('Result: ')}`)
-
   const completion = await model.generate(prompt)
 
-  await io.write(`${prompt}${chalk.cyan(completion)}\n\n`)
+  await io.write(`${chalk.cyan('Result: ')}${prompt}${chalk.cyan(completion)}\n\n`)
 }
