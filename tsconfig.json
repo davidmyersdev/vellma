@@ -16,7 +16,7 @@
       "#data/*": ["./src/data/*"],
       "#globals": ["./src/globals"],
       "#globals/*": ["./src/globals/*"],
-      "ellma": ["."],
+      "ellma": ["./src/index.ts"],
       "ellma/integrations": ["./integrations/src"],
       "ellma/integrations/*": ["./integrations/src/*"],
       "ellma/models": ["./models/src"],

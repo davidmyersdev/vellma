@@ -27,6 +27,7 @@ export default defineConfig({
       'ellma/integrations': join(root, './integrations/src'),
       'ellma/models': join(root, './models/src'),
       'ellma/peripherals': join(root, './peripherals/src'),
+      'ellma': join(root, './src'),
     },
   },
   root,

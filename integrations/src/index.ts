@@ -1,25 +1,17 @@
-import { type integrationNames } from 'ellma/data/internal'
-import { type OpenAiIntegration, type OpenAiIntegrationConfig, openaiIntegration } from './openai'
+import { type ChatIntegration, type CompleteIntegration, type EmbeddingIntegration } from 'ellma/models'
+import { openai } from './openai'
 
-export * from './openai'
+export type Integration = ChatIntegration & CompleteIntegration & EmbeddingIntegration
 
-export type AvailableIntegrations = [
-  {
-    name: typeof integrationNames.openai,
-    config: OpenAiIntegrationConfig,
-  },
-]
-
-export type IntegrationInitializers = {
-  openai: OpenAiIntegrationConfig,
-}
-
-export type Integrations = {
-  openai: OpenAiIntegration,
-}
-
-export const useIntegrations = (config: IntegrationInitializers): Integrations => {
+export const withDefaults = (integration: Partial<Integration>): Integration => {
   return {
-    openai: openaiIntegration(config.openai),
+    chat: async () => { throw new Error('[integration] not implemented') },
+    complete: async () => { throw new Error('[integration] not implemented') },
+    embedding: async () => { throw new Error('[integration] not implemented') },
+    ...integration,
   }
+}
+
+export {
+  openai,
 }

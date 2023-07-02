@@ -1,11 +1,17 @@
 import { memoryAdapter } from './adapters/memory'
 
 export type StorageAdapter = {
-  get: (key: unknown) => Promise<unknown>,
-  set: (key: unknown, data: unknown) => Promise<void>,
+  get: <Key = unknown, Data = unknown>(key: Key) => Promise<Data>,
+  remove: <Key = unknown>(key: Key) => Promise<void>,
+  set: <Key = unknown, Data = unknown>(key: Key, data: Data) => Promise<void>,
 }
 
-export type StoragePeripheral = ReturnType<typeof useStorage>
+export type StoragePeripheral = Omit<StorageAdapter, 'get'> & {
+  get: {
+    <Key = unknown, Data = unknown>(key: Key, fallback: Data): Promise<Data>,
+    <Key = unknown, Data = unknown>(key: Key): Promise<Data | undefined>,
+  },
+}
 
 /**
  * Create an object for interacting with storage.
@@ -13,9 +19,18 @@ export type StoragePeripheral = ReturnType<typeof useStorage>
  * @param adapter The adapter to use for storing data. Defaults to `memoryAdapter()`.
  * @returns A StoragePeripheral object.
  */
-export const useStorage = (adapter: StorageAdapter = memoryAdapter()) => {
+export const useStorage = (adapter: StorageAdapter = memoryAdapter()): StoragePeripheral => {
   return {
-    get: adapter.get,
+    /**
+     *
+     * @param key A key to use for retrieving data.
+     * @param fallback An optional fallback value to return if the key does not exist.
+     * @returns The data stored at the key, or the fallback value if the key does not exist.
+     */
+    get: async <Key = unknown, Data = unknown>(key: Key, fallback?: Data) => {
+      return await adapter.get<Key, Data>(key) ?? fallback
+    },
+    remove: adapter.remove,
     set: adapter.set,
   }
 }

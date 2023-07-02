@@ -1,33 +1,30 @@
-import { openai } from './adapters'
-import { type Vector } from '#data'
-import { integrationNames } from '#data/internal'
-import { type Globals } from '#globals'
+import { type Vector, id as makeId } from 'ellma/data'
+import { type Peripherals, useStorage } from 'ellma/peripherals'
+import { type Model } from '..'
 
-export type EmbeddingAdapter = {
-  call: (text: string | string[]) => Promise<Vector>,
+export type EmbeddingIntegration = {
+  embedding: (text: string | string[]) => Promise<Vector>,
 }
 
-export type EmbeddingIntegration = keyof typeof adapters
+export type EmbeddingModel = Omit<Model, 'model'> & ReturnType<typeof useEmbedding>
 
-export type EmbeddingModel = ReturnType<typeof useEmbedding>
 export type EmbeddingModelConfig = {
-  integration?: EmbeddingIntegration,
+  integration: EmbeddingIntegration,
+  peripherals?: Partial<Peripherals>,
 }
 
-const adapters = {
-  [integrationNames.openai]: openai,
-}
+// Todo: Store embeddings to prevent duplicate API calls.
+export const useEmbedding = ({ integration, peripherals: { storage: _storage = useStorage() } = {} }: EmbeddingModelConfig) => {
+  const id = makeId()
 
-const useAdapter = (globals: Globals): EmbeddingAdapter => {
-  const fn = adapters[globals.integration]
-
-  return fn(globals)
-}
-
-export const useEmbedding = (globals: Globals) => {
-  const adapter = useAdapter(globals)
+  const generate = async (text: string | string[]) => {
+    return await integration.embedding(text)
+  }
 
   return {
-    call: adapter.call,
+    id,
+    model: {
+      generate,
+    },
   }
 }

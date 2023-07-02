@@ -1,5 +1,7 @@
 import { ioCallbacks } from './adapters/callbacks'
 
+export * from './adapters'
+
 export type IoAdapter = {
   read: () => Promise<string>,
   write: (text: string) => Promise<void>,

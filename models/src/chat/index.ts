@@ -1,51 +1,62 @@
-import { openaiAdapter } from './adapters'
-import { type Message } from '#data'
-import { integrationNames } from '#data/internal'
-import { type Globals } from '#globals'
+import { type Message, id as makeId, messageFactory } from 'ellma/data'
+import { type Peripherals, useStorage } from 'ellma/peripherals'
+import { type Model } from '..'
 
-export type ChatAdapter = {
-  call: (messages: Message[]) => Promise<Message>,
+export type ChatIntegration = {
+  chat: (messages: Message[]) => Promise<Message>,
 }
 
-export type ChatIntegration = keyof typeof chatAdapters
+export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 
-export type ChatModel = ReturnType<typeof useChat>
 export type ChatModelConfig = {
-  integration?: ChatIntegration,
+  integration: ChatIntegration,
+  peripherals?: Partial<Peripherals>,
 }
 
-const chatAdapters = {
-  [integrationNames.openai]: openaiAdapter,
-}
+export const useChat = ({ integration, peripherals: { storage = useStorage() } = {} }: ChatModelConfig) => {
+  const id = makeId()
 
-const useChatAdapter = (globals: Globals): ChatAdapter => {
-  const fn = chatAdapters[globals.integration]
+  const add = async (message: Message) => {
+    await storage.set(id, [...await get(id), message])
+  }
 
-  return fn(globals)
-}
+  const clear = async () => {
+    await storage.remove(id)
+  }
 
-export const useChat = (globals: Globals) => {
-  const memory = <Message[]>[]
-  const adapter = useChatAdapter(globals)
+  const generate = async (...messages: Message[]) => {
+    const all = [...await get(id), ...messages]
+
+    await hydrate(all)
+
+    const reply = await integration.chat(all)
+
+    await add(reply)
+
+    return reply
+  }
+
+  const get = async (id: string) => {
+    return await storage.get<string, Message[]>(id, [])
+  }
+
+  const history = async () => {
+    return [...await get(id)]
+  }
+
+  const hydrate = async (messages: Message[]) => {
+    await storage.set(id, messages)
+  }
 
   return {
-    add: async (message: Message) => {
-      memory.push(message)
-    },
-    clear: async () => {
-      memory.splice(0, memory.length)
-    },
-    generate: async (...messages: Message[]) => {
-      memory.push(...messages)
-
-      const message = await adapter.call([...memory])
-
-      memory.push(message)
-
-      return message
-    },
-    history: async () => {
-      return [...memory]
+    id,
+    factory: messageFactory,
+    model: {
+      add,
+      clear,
+      generate,
+      history,
+      hydrate,
     },
   }
 }
