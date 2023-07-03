@@ -6,6 +6,7 @@ Easy LLM Assistants
 
 - [Concepts](#concepts)
   - [Interfaces and adapters](#interfaces-and-adapters)
+    - [Example: Mapping `api.openai.com/v1/chat/completions` to `ChatIntegration`](#example-mapping-apiopenaicomv1chatcompletions-to-chatintegration)
   - [Peripherals](#peripherals)
     - [Example: Getting input from or displaying output to a user](#example-getting-input-from-or-displaying-output-to-a-user)
   - [Models](#models)
@@ -24,6 +25,30 @@ In order to keep this library flexible, while also maintaining reasonable defaul
 
 - Mapping the `openai` endpoint for chat completions to the `ChatIntegration` interface used by chat models.
 - Mapping the `node:readline` terminal IO utilities to the `IoPeripheral` interface used by features that deal with user input and output.
+
+#### Example: Mapping `api.openai.com/v1/chat/completions` to `ChatIntegration`
+
+Take a look at the following interface for [`ChatIntegration`](./models/src/chat/index.ts#5).
+
+```ts
+export type ChatIntegration = {
+  chat: (messages: ChatMessage[]) => Promise<ChatMessage>,
+}
+```
+
+The interface is meant to be simple for the generic chat model to consume, so it has a single `chat` property. The `chat` property is a function that takes an array of `ChatMessage` objects (the conversation so far) and returns a single `ChatMessage` object (the reply). The interface for the function that calls `/v1/chat/completions`, however, is a bit more complicated.
+
+```ts
+export type OpenAiChatApi = (config: {
+  apiKey: string,
+  messages: OpenAiChatMessage[],
+  model?: string,
+  organizationId?: string,
+  peripherals?: Partial<Peripherals>,
+}) => Promise<OpenAiChatApiResponse>
+```
+
+Not only do we need the messages, but we also need the API key, the preferred model, and more. The function is essentially a raw implementation of the corresponding `openai` endpoint, and an adapter must be used to map it to the `ChatIntegration` interface.
 
 ### Peripherals
 
