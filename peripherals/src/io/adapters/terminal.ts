@@ -33,6 +33,12 @@ export const ioTerminal = ({ input = process.stdin, output = process.stdout }: {
 
           attemptSubmit()
         })
+
+        rl.on('SIGINT', () => {
+          rl.close()
+
+          throw new Error('[peripherals][io][terminal] user closed the input stream')
+        })
       })
     },
     write: async (text: string) => {
