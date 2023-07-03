@@ -37,8 +37,8 @@ export const cli = (args: string[]) => {
     // await chat(globals)
   })
 
-  definition.command('complete').action(async (_options) => {
-    // await complete(globals)
+  definition.command('completion').action(async (_options) => {
+    // await completion(globals)
   })
 
   definition.command('embed').action(async (_options) => {

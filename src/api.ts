@@ -4,7 +4,7 @@ import { type CreateChatCompletionResponse, type CreateCompletionResponse, type 
 export type ApiOptions = { apiKey: string, organization?: string, userId?: string }
 export type ApiChatMessage = { content: string, role: 'assistant' | 'system' | 'user', name?: string }
 export type ApiChatOptions = { messages: ApiChatMessage[], model: string }
-export type ApiCompleteOptions = { model: string, prompt: string }
+export type ApiCompletionOptions = { model: string, prompt: string }
 export type ApiEmbeddingOptions = { input: string | string[], model?: string, user?: string }
 export type ApiMiddlewareFn = (arg: { data: ApiResponseData, response: Response }) => any
 export type ApiModerationOptions = { input: string, model: string }
@@ -77,7 +77,7 @@ export const buildApiInstance = ({ apiKey, organization, userId }: ApiOptions) =
         response,
       }
     },
-    complete: async ({ model, prompt }: ApiCompleteOptions) => {
+    completion: async ({ model, prompt }: ApiCompletionOptions) => {
       const response = await fetch(`${baseUrl}/v1/completions`, buildPostRequest({ body: { model, prompt } })) as ApiResponse<CreateCompletionResponse>
       const json = await response.json() as CreateCompletionResponse
 

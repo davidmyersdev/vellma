@@ -1,5 +1,5 @@
 import { withDefaults } from '..'
-import { chat, complete, embedding } from './adapters'
+import { chat, completion, embedding } from './adapters'
 import { type ApiConfig } from './api'
 
 export const openai = (config: ApiConfig) => {
@@ -7,8 +7,8 @@ export const openai = (config: ApiConfig) => {
     chat: async (messages) => {
       return chat({ ...config, messages })
     },
-    complete: async (text) => {
-      return complete({ ...config, text })
+    completion: async (text) => {
+      return completion({ ...config, text })
     },
     embedding: async (text) => {
       return embedding({ ...config, text })

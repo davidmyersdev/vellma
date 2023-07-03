@@ -89,19 +89,19 @@ export const chat = async (config: ApiChatConfig) => {
   }
 }
 
-export type ApiCompleteConfig = ApiConfig & {
+export type ApiCompletionConfig = ApiConfig & {
   prompt: string,
   model?: string,
 }
-export type ApiCompleteResponse = ApiResponse<CreateCompletionResponse>
-export type ApiCompleteResponseData = CreateCompletionResponse
+export type ApiCompletionResponse = ApiResponse<CreateCompletionResponse>
+export type ApiCompletionResponseData = CreateCompletionResponse
 
-export const complete = async (config: ApiCompleteConfig) => {
+export const completion = async (config: ApiCompletionConfig) => {
   const api = apiClient(config)
   const { model = 'text-davinci-003', prompt } = config
 
-  const response = await api.post('/v1/completions', { body: { model, prompt } }) as ApiCompleteResponse
-  const json = await response.json() as ApiCompleteResponseData
+  const response = await api.post('/v1/completions', { body: { model, prompt } }) as ApiCompletionResponse
+  const json = await response.json() as ApiCompletionResponseData
 
   return {
     json,

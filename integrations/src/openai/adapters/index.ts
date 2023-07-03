@@ -1,3 +1,3 @@
 export * from './chat'
-export * from './complete'
+export * from './completion'
 export * from './embedding'
