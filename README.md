@@ -151,7 +151,7 @@ Add your OpenAI API key and (optionally) add your organization and user keys if 
 # ~/path/to/ellma/.env
 VITE_OPENAI_API_KEY=your-api-key
 # The rest are optional.
-VITE_OPENAI_ORGANIZATION=
+VITE_OPENAI_ORGANIZATION_ID=
 VITE_OPENAI_USER_ID=
 ```
 
