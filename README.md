@@ -1,81 +1,18 @@
-# `ellma`
+# `ellma` <!-- omit in toc -->
 
 Easy LLM Assistants
 
-## How to use `ellma`
+## Overview <!-- omit in toc -->
 
-Install it with your preferred package manager.
-
-```bash
-# npm
-npm i ellma
-
-# pnpm
-pnpm add ellma
-
-# yarn
-yarn add ellma
-```
-
-Import (or create) an integration, and use it to initialize a model. Use the model to generate output.
-
-```ts
-import { useChat } from 'ellma'
-import { openai } from 'ellma/integrations'
-
-const integration = openai({ apiKey: 'your-private-api-key' })
-const { factory, model } = useChat({ integration })
-
-const greeting = factory.human({ text: 'Good morning!' })
-const reply = await model.generate(greeting)
-
-console.log(reply.text) // 'Good morning! How may I assist you today?'
-```
-
-For more examples, check out the [`playground`](./playground) directory.
-
-## How to contribute to `ellma`
-
-Things are still early stage and are changing, but I recommend you read through the "Concepts" section below before you get started.
-
-### Set up your development environment
-
-Clone the repo to your machine.
-
-```bash
-git clone git@github.com:davidmyersdev/ellma.git
-```
-
-Install dependencies with `pnpm`.
-
-```bash
-# ~/path/to/ellma
-pnpm i
-```
-
-Create your `.env` file.
-
-```bash
-# ~/path/to/ellma
-cp .env.example .env
-```
-
-Add your OpenAI API key and (optionally) add your organization and user keys if you have them.
-
-```bash
-# ~/path/to/ellma/.env
-VITE_OPENAI_API_KEY=your-api-key
-# The rest are optional.
-VITE_OPENAI_ORGANIZATION=
-VITE_OPENAI_USER_ID=
-```
-
-Run an action with `pnpm ellma <action>`. To start a conversation with ChatGPT, run the following command.
-
-```bash
-# ~/path/to/ellma
-pnpm ellma chat
-```
+- [Concepts](#concepts)
+  - [Interfaces and adapters](#interfaces-and-adapters)
+  - [Peripherals](#peripherals)
+    - [Example: Getting input from or displaying output to a user](#example-getting-input-from-or-displaying-output-to-a-user)
+  - [Models](#models)
+  - [Integrations](#integrations)
+- [How to use `ellma`](#how-to-use-ellma)
+- [How to contribute to `ellma`](#how-to-contribute-to-ellma)
+  - [Set up your development environment](#set-up-your-development-environment)
 
 ## Concepts
 
@@ -124,3 +61,78 @@ Example storage integrations
 - AWS S3
 - Google Cloud Storage
 - Supabase
+
+## How to use `ellma`
+
+Install it with your preferred package manager.
+
+```bash
+# npm
+npm i ellma
+
+# pnpm
+pnpm add ellma
+
+# yarn
+yarn add ellma
+```
+
+Import (or create) an integration, and use it to initialize a model. Use the model to generate output.
+
+```ts
+import { useChat } from 'ellma'
+import { openai } from 'ellma/integrations'
+
+const integration = openai({ apiKey: 'your-private-api-key' })
+const { factory, model } = useChat({ integration })
+
+const greeting = factory.human({ text: 'Good morning!' })
+const reply = await model.generate(greeting)
+
+console.log(reply.text) // 'Good morning! How may I assist you today?'
+```
+
+For more examples, check out the [`playground`](./playground) directory.
+
+## How to contribute to `ellma`
+
+Things are still changing, but I recommend you read through the "Concepts" section above before you get started.
+
+### Set up your development environment
+
+Clone the repo to your machine.
+
+```bash
+git clone git@github.com:davidmyersdev/ellma.git
+```
+
+Install dependencies with `pnpm`.
+
+```bash
+# ~/path/to/ellma
+pnpm i
+```
+
+Create your `.env` file.
+
+```bash
+# ~/path/to/ellma
+cp .env.example .env
+```
+
+Add your OpenAI API key and (optionally) add your organization and user keys if you have them.
+
+```bash
+# ~/path/to/ellma/.env
+VITE_OPENAI_API_KEY=your-api-key
+# The rest are optional.
+VITE_OPENAI_ORGANIZATION=
+VITE_OPENAI_USER_ID=
+```
+
+Run an action with `pnpm ellma <action>`. To start a conversation with ChatGPT, run the following command.
+
+```bash
+# ~/path/to/ellma
+pnpm ellma chat
+```
