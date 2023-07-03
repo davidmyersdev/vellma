@@ -160,9 +160,9 @@ VITE_OPENAI_ORGANIZATION_ID=
 VITE_OPENAI_USER_ID=
 ```
 
-Run an action with `pnpm ellma <action>`. To start a conversation with ChatGPT, run the following command.
+Run a playground example `pnpm vite-node ./playground/<example>.ts`. To try out the basic chat implementation, run the following.
 
 ```bash
 # ~/path/to/ellma
-pnpm ellma chat
+pnpm vite-node ./playground/chat-basic.ts
 ```
