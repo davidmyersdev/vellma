@@ -15,6 +15,15 @@ export type StoragePeripheral = Omit<StorageAdapter, 'get'> & {
   },
 }
 
+export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter => {
+  return {
+    get: async () => { throw new Error('[storage] not implemented') },
+    remove: async () => { throw new Error('[storage] not implemented') },
+    set: async () => { throw new Error('[storage] not implemented') },
+    ...adapter,
+  }
+}
+
 /**
  * Create an object for interacting with storage.
  *

@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { type StorageAdapter } from '..'
+import { type StorageAdapter, withDefaults } from '..'
 
 const defaultPath = () => {
   return resolve(join('tmp', `${Date.now()}-storage.json`))
@@ -19,7 +19,7 @@ export const storageFile = (path = defaultPath()): StorageAdapter => {
     writeFileSync(path, JSON.stringify(store, null, 2))
   }
 
-  return {
+  return withDefaults({
     get: async <Key = unknown, Data = unknown>(key: Key): Promise<Data> => {
       return store[key as string]
     },
@@ -33,5 +33,5 @@ export const storageFile = (path = defaultPath()): StorageAdapter => {
 
       updateStore()
     },
-  }
+  })
 }

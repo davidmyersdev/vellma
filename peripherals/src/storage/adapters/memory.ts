@@ -1,9 +1,9 @@
-import { type StorageAdapter } from '..'
+import { type StorageAdapter, withDefaults } from '..'
 
 export const memoryAdapter = (): StorageAdapter => {
   const store = new Map<any, any>()
 
-  return {
+  return withDefaults({
     get: async <Key = unknown, Data = unknown>(key: Key): Promise<Data> => {
       return store.get(key)
     },
@@ -13,5 +13,5 @@ export const memoryAdapter = (): StorageAdapter => {
     set: async <Key = unknown, Data = unknown>(key: Key, data: Data) => {
       store.set(key, data)
     },
-  }
+  })
 }
