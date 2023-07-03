@@ -10,6 +10,7 @@ Easy LLM Assistants
   - [Peripherals](#peripherals)
     - [Example: Getting input from or displaying output to a user](#example-getting-input-from-or-displaying-output-to-a-user)
   - [Models](#models)
+    - [Embedding models](#embedding-models)
   - [Integrations](#integrations)
 - [How to use `ellma`](#how-to-use-ellma)
 - [How to contribute to `ellma`](#how-to-contribute-to-ellma)
@@ -69,6 +70,10 @@ These are the various types of AI models that we can use in our agents. Models a
 - Chat-based LLMs
 - Completion-based LLMs
 - Text-to-embedding transformers
+
+#### Embedding models
+
+The embedding model is a special type of model that is used to convert text into a vector representation. This is useful for a variety of tasks, including Q&A on a specific piece of information. For example, we can generate vector representations of text with the embedding model and then store those vectors in a database alongside the text they represent. Then, we can generate a vector representation of a given input, query the database for the most similar pieces of text, and include one or more of those results in the prompt for the model.
 
 ### Integrations
 
