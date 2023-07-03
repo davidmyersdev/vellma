@@ -1,5 +1,7 @@
 import { memoryAdapter } from './adapters/memory'
 
+export * from './adapters'
+
 export type StorageAdapter = {
   get: <Key = unknown, Data = unknown>(key: Key) => Promise<Data>,
   remove: <Key = unknown>(key: Key) => Promise<void>,
