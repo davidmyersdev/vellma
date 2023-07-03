@@ -2,7 +2,7 @@ import { vector } from 'ellma/data'
 import { type ApiEmbeddingConfig, embedding as embeddingApi } from '../api'
 
 export type EmbeddingConfig = Omit<ApiEmbeddingConfig, 'input' | 'user'> & {
-  text: string | string[],
+  text: string,
   userId?: string,
 }
 
