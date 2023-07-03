@@ -79,11 +79,18 @@ pnpm ellma chat
 
 ## Concepts
 
-To get the best out of `ellma`, there are some concepts that you need to understand.
+To get the best out of `ellma`, there are some concepts that you should understand.
+
+### Interfaces and adapters
+
+In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **interface** and the **adapter**. The interface refers to the _internal_ interface that we will use throughout the codebase. The adapter maps that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
+
+- Mapping the `openai` endpoint for chat completions to the `ChatIntegration` interface used by chat models.
+- Mapping the `node:readline` terminal IO utilities to the `IoPeripheral` interface used by features that deal with user input and output.
 
 ### Peripherals
 
-In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **peripheral** and the **adapter**. The peripheral should define the _internal_ interface that we will use throughout the codebase. The adapter should map that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
+Peripherals wrap environment-specific functionality that we use in our models, integrations, or even other peripherals. Some examples of this are:
 
 - Making HTTP requests
 - Getting input from or displaying output to a user
@@ -103,7 +110,17 @@ These are the various types of AI models that we can use in our agents. Models a
 
 ### Integrations
 
-These are the interfaces that allow us to communicate with third-party services. Integrations wrap the functionality of a third-party service so that we can use them in our models or even our peripherals. Some examples of this are:
+These are the interfaces that allow us to communicate with third-party services. Integrations wrap the functionality of third-party services for use by **models** or **peripherals**. Integrations are organized by provider (e.g. `openai`) and may expose multiple models or peripherals. The interface for an integration is defined by the consumer of the specific implementation. For example, the `openai` integration exposes a `chat` function that conforms to the `ChatIntegration` interface defined by the chat model in [`./models`](./models/src/chat/index.ts).
+
+Example model integrations
 
 - OpenAI
 - PaLM 2
+
+Integrations can also be used to wrap peripherals. An integration for `firebase`, for example, could be used by a custom adapter for the `storage` peripheral.
+
+Example storage integrations
+
+- AWS S3
+- Google Cloud Storage
+- Supabase
