@@ -20,6 +20,13 @@ export const storageFile = (path = defaultPath()): StorageAdapter => {
   }
 
   return withDefaults({
+    each: async (callback) => {
+      const keys = Object.keys(store)
+
+      for (const key of keys) {
+        await callback(key as any, store[key])
+      }
+    },
     get: async <Key = unknown, Data = unknown>(key: Key): Promise<Data> => {
       return store[key as string]
     },

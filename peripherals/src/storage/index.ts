@@ -3,6 +3,7 @@ import { memoryAdapter } from './adapters/memory'
 export * from './adapters'
 
 export type StorageAdapter = {
+  each: <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<void>) => Promise<void>,
   get: <Key = unknown, Data = unknown>(key: Key) => Promise<Data>,
   remove: <Key = unknown>(key: Key) => Promise<void>,
   set: <Key = unknown, Data = unknown>(key: Key, data: Data) => Promise<void>,
@@ -17,6 +18,7 @@ export type StoragePeripheral = Omit<StorageAdapter, 'get'> & {
 
 export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter => {
   return {
+    each: async () => { throw new Error('[storage] not implemented') },
     get: async () => { throw new Error('[storage] not implemented') },
     remove: async () => { throw new Error('[storage] not implemented') },
     set: async () => { throw new Error('[storage] not implemented') },
@@ -32,6 +34,7 @@ export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter =
  */
 export const useStorage = (adapter: StorageAdapter = memoryAdapter()): StoragePeripheral => {
   return {
+    ...adapter,
     /**
      *
      * @param key A key to use for retrieving data.
@@ -41,7 +44,5 @@ export const useStorage = (adapter: StorageAdapter = memoryAdapter()): StoragePe
     get: async <Key = unknown, Data = unknown>(key: Key, fallback?: Data) => {
       return await adapter.get<Key, Data>(key) ?? fallback
     },
-    remove: adapter.remove,
-    set: adapter.set,
   }
 }
