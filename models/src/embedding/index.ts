@@ -1,5 +1,5 @@
 import { type Vector, id as makeId } from 'ellma/data'
-import { type Peripherals, useStorage } from 'ellma/peripherals'
+import { type Peripherals, useCrypto, useStorage } from 'ellma/peripherals'
 import { type Model } from '..'
 
 export type EmbeddingIntegration = {
@@ -13,12 +13,24 @@ export type EmbeddingModelConfig = {
   peripherals?: Partial<Peripherals>,
 }
 
-// Todo: Store embeddings to prevent duplicate API calls.
-export const useEmbedding = ({ integration, peripherals: { storage: _storage = useStorage() } = {} }: EmbeddingModelConfig) => {
+export const useEmbedding = ({ integration, peripherals = {} }: EmbeddingModelConfig) => {
   const id = makeId()
+  const { crypto = useCrypto(), storage = useStorage() } = peripherals
 
   const generate = async (text: string) => {
-    return await integration.embedding(text)
+    // Todo: Use the modelId as well as the text to generate a hash.
+    const hash = await crypto.hash('SHA-512', text)
+    const storedVector = await storage.get<string, Vector>(hash)
+
+    if (storedVector) {
+      return storedVector
+    }
+
+    const vector = await integration.embedding(text)
+
+    await storage.set(hash, vector)
+
+    return vector
   }
 
   return {
