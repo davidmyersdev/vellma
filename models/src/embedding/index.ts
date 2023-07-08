@@ -1,4 +1,4 @@
-import { type Vector, id as makeId } from 'ellma/data'
+import { type Vector, id as makeId } from 'ellma'
 import { type Peripherals, useCrypto, useStorage } from 'ellma/peripherals'
 import { type Model } from '..'
 

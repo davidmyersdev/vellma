@@ -1,4 +1,4 @@
-import { type Message, id as makeId, messageFactory } from 'ellma/data'
+import { type Message, id as makeId, messageFactory } from 'ellma'
 import { type Peripherals, useStorage } from 'ellma/peripherals'
 import { type Model } from '..'
 

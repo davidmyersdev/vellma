@@ -1,4 +1,4 @@
-import { id as makeId } from 'ellma/data'
+import { id as makeId } from 'ellma'
 import { type Model } from '..'
 
 export type CompletionIntegration = {
