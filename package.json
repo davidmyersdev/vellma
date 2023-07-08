@@ -68,10 +68,12 @@
     "build": "run-s clean && run-p build:* && run-s types",
     "build:core": "vite build",
     "build:integrations": "vite build ./integrations",
+    "build:models": "vite build ./models",
     "build:peripherals": "vite build ./peripherals",
     "clean": "run-p clean:*",
     "clean:core": "rimraf ./dist ./types",
     "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
+    "clean:models": "rimraf ./models/dist ./models/types",
     "clean:peripherals": "rimraf ./peripherals/dist ./peripherals/types",
     "ellma": "vite-node --script ./ellma.ts",
     "lint": "eslint .",
@@ -80,6 +82,7 @@
     "types": "tsc && run-p types:*",
     "types:core": "rollup -c ./types.config.js",
     "types:integrations": "rollup -c ./integrations/types.config.js",
+    "types:models": "rollup -c ./models/types.config.js",
     "types:peripherals": "rollup -c ./peripherals/types.config.js"
   },
   "dependencies": {
