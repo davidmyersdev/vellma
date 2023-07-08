@@ -29,8 +29,8 @@ const textChunks = await splitter.splitText(file)
 const vectors = [] as Vector[]
 
 // Create vectors for all text chunks
-for (const text of textChunks) {
-  const vector = await embeddingModel.generate(text)
+for (const textChunk of textChunks) {
+  const vector = await embeddingModel.generate(textChunk)
 
   vectors.push(vector)
 }
