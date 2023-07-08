@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   chalk:
     specifier: ^5.2.0
@@ -13,9 +17,6 @@ dependencies:
   langchain:
     specifier: ^0.0.102
     version: 0.0.102
-  lodash:
-    specifier: ^4.17.21
-    version: 4.17.21
   ml-distance:
     specifier: ^4.0.1
     version: 4.0.1
@@ -54,6 +55,9 @@ devDependencies:
   eslint-config-artisan:
     specifier: ^0.2.1
     version: 0.2.1(eslint@8.40.0)(typescript@5.0.4)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   npm-run-all:
     specifier: ^4.1.5
     version: 4.1.5
@@ -2496,6 +2500,7 @@ packages:
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: true
 
   /lru-cache@10.0.0:
     resolution: {integrity: sha512-svTf/fzsKHffP42sujkO/Rjs37BCIsQVRCeNYIm9WN8rgT7ffoUnRtZCqU+6BqcSBdv8gwJeTz8knJpgACeQMw==}
