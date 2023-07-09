@@ -12,7 +12,7 @@ export const ioEventEmitter = () => {
  * @param eventEmitter The event emitter that reads and writes are fired on. Defaults to `new EventEmitter()`.
  * @returns An IO adapter that uses events to communicate reads and writes.
  */
-export const ioEvents = (eventEmitter = ioEventEmitter()): IoAdapter => {
+export const eventsIo = (eventEmitter = ioEventEmitter()): IoAdapter => {
   return {
     read: async () => {
       return new Promise((resolve) => {

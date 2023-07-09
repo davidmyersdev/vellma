@@ -2,11 +2,11 @@ import { join, resolve } from 'node:path'
 import chalk from 'chalk'
 import { openai } from 'ellma/integrations'
 import { useEmbedding } from 'ellma/models'
-import { ioTerminal, storageFile, useIo, useStorage } from 'ellma/peripherals'
+import { terminalIo, storageFile, useIo, useStorage } from 'ellma/peripherals'
 
 // Ellma initialization
 const dbFile = resolve(join('tmp', 'playground-basic-embedding.json'))
-const io = useIo(ioTerminal())
+const io = useIo(terminalIo())
 const storage = useStorage(storageFile(dbFile))
 const peripherals = { io, storage }
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })

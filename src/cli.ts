@@ -21,7 +21,7 @@ export const cli = (args: string[]) => {
   //     },
   //   },
   //   peripherals: {
-  //     io: ioTerminal(),
+  //     io: terminalIo(),
   //   },
   // })
 

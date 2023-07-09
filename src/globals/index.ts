@@ -2,7 +2,7 @@
 // import { type ChatModelConfig, type ModelConfig } from 'ellma/models'
 // import { type PeripheralAdapters, type Peripherals, usePeripherals } from 'ellma/peripherals'
 // import { fetchAdapter } from 'ellma/peripherals/http/adapters/fetch'
-// import { ioCallbacks } from 'ellma/peripherals/io/adapters/callbacks'
+// import { callbacksIo } from 'ellma/peripherals/io/adapters/callbacks'
 // import { memoryAdapter } from 'ellma/peripherals/storage/adapters/memory'
 
 // export type GlobalConfig = {
@@ -49,7 +49,7 @@
 //     },
 //     peripherals: {
 //       http: config.peripherals?.http || fetchAdapter(),
-//       io: config.peripherals?.io || ioCallbacks(),
+//       io: config.peripherals?.io || callbacksIo(),
 //       storage: config.peripherals?.storage || memoryAdapter(),
 //     },
 //   }
@@ -67,7 +67,7 @@
 //     models: config.models,
 //     peripherals: usePeripherals({
 //       http: config.peripherals.http || fetchAdapter(),
-//       io: config.peripherals.io || ioCallbacks(),
+//       io: config.peripherals.io || callbacksIo(),
 //       storage: config.peripherals.storage || memoryAdapter(),
 //     }),
 //   }

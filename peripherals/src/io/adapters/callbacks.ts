@@ -13,7 +13,7 @@ export const onWriteCallback = async (_text: string) => {}
  * @param onWrite The callback that resolves writes. Defaults to `async (_text: string) => {}`.
  * @returns An IO adapter that uses callbacks to communicate reads and writes.
  */
-export const ioCallbacks = (onRead: OnReadCallback = onReadCallback, onWrite: OnWriteCallback = onWriteCallback): IoAdapter => {
+export const callbacksIo = (onRead: OnReadCallback = onReadCallback, onWrite: OnWriteCallback = onWriteCallback): IoAdapter => {
   return {
     read: async () => {
       return await onRead()

@@ -10,7 +10,7 @@ import { type IoAdapter } from '..'
  * @param options.output The writable stream to write output to. Defaults to `process.stdout`.
  * @returns The user input.
  */
-export const ioTerminal = ({ input = process.stdin, output = process.stdout }: { input?: NodeJS.ReadableStream, output?: NodeJS.WritableStream } = {}): IoAdapter => {
+export const terminalIo = ({ input = process.stdin, output = process.stdout }: { input?: NodeJS.ReadableStream, output?: NodeJS.WritableStream } = {}): IoAdapter => {
   return {
     read: async () => {
       return new Promise((resolve) => {

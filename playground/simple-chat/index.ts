@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { openai } from 'ellma/integrations'
 import { useChat } from 'ellma/models'
-import { ioTerminal, useIo } from 'ellma/peripherals'
+import { terminalIo, useIo } from 'ellma/peripherals'
 
 // Output helpers
 const labelAssistant = chalk.cyan('Assistant:')
@@ -10,7 +10,7 @@ const labelHuman = chalk.green('You:')
 // Ellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
 const { factory, model } = useChat({ integration })
-const io = useIo(ioTerminal())
+const io = useIo(terminalIo())
 
 // Chat loop
 while (true) {
