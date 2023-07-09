@@ -15,6 +15,7 @@ export type ApiChatRole = z.infer<typeof zApiChatRole>
 
 export const zApiChatModel = z.enum([
   'gpt-3.5-turbo',
+  'gpt-4',
 ])
 
 export const zApiChatRole = z.enum([
@@ -83,7 +84,7 @@ export type ApiChatResponseData = CreateChatCompletionResponse
 
 export const chat = async (config: ApiChatConfig) => {
   const api = apiClient(config)
-  const { messages, model = 'gpt-3.5-turbo' } = config
+  const { messages, model = 'gpt-4' } = config
 
   const response = await api.post('/v1/chat/completions', { body: { messages, model } }) as ApiChatResponse
   const json = await response.json() as ApiChatResponseData
