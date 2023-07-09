@@ -11,9 +11,10 @@ export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 export type ChatModelConfig = {
   integration: ChatIntegration,
   peripherals?: Partial<Peripherals>,
+  retries?: number,
 }
 
-export const useChat = ({ integration, peripherals: { storage = useStorage() } = {} }: ChatModelConfig) => {
+export const useChat = ({ integration, peripherals: { storage = useStorage() } = {}, retries = 2 }: ChatModelConfig) => {
   const id = makeId()
 
   const add = async (message: Message) => {
@@ -29,11 +30,19 @@ export const useChat = ({ integration, peripherals: { storage = useStorage() } =
 
     await hydrate(all)
 
-    const reply = await integration.chat(all)
+    for (let i = 0; i < retries; i++) {
+      try {
+        const reply = await integration.chat(all)
 
-    await add(reply)
+        await add(reply)
 
-    return reply
+        return reply
+      } catch (error) {
+        // do nothing for now.
+      }
+    }
+
+    throw new Error('[models][chat] exceeded maximum retries.')
   }
 
   const get = async (id: string) => {
