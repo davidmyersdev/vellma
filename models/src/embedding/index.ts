@@ -20,7 +20,8 @@ export const useEmbedding = ({ integration, peripherals = {} }: EmbeddingModelCo
   const generate = async (text: string) => {
     // Todo: Use the modelId as well as the text to generate a hash.
     const hash = await crypto.hash('SHA-512', text)
-    const storedVector = await storage.get<string, Vector>(hash)
+    const storageKey = `embedding:${hash}`
+    const storedVector = await storage.get<string, Vector>(storageKey)
 
     if (storedVector) {
       return storedVector
@@ -28,7 +29,7 @@ export const useEmbedding = ({ integration, peripherals = {} }: EmbeddingModelCo
 
     const vector = await integration.embedding(text)
 
-    await storage.set(hash, vector)
+    await storage.set(storageKey, vector)
 
     return vector
   }

@@ -24,7 +24,11 @@ export const fileStorage = (path = defaultPath()): StorageAdapter => {
       const keys = Object.keys(store)
 
       for (const key of keys) {
-        await callback(key as any, store[key])
+        const step = await callback(key as any, store[key])
+
+        if (step?.break) {
+          break
+        }
       }
     },
     get: async <Key = unknown, Data = unknown>(key: Key): Promise<Data> => {
