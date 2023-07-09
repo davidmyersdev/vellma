@@ -1,6 +1,6 @@
 # `ellma` <!-- omit in toc -->
 
-Eloquent LLM Assistants
+Virtual, Eloquent LLM Assistants
 
 ## Overview <!-- omit in toc -->
 
