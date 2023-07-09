@@ -1,4 +1,4 @@
-import { type Peripherals, useHttp, useIo } from 'ellma/peripherals'
+import { type Peripherals, useHttp, useIo } from 'vellma/peripherals'
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { z } from 'zod'
 

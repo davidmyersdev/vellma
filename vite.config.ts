@@ -16,7 +16,7 @@ export default defineConfig({
   plugins: [
     externalizeDeps({
       include: [
-        /^ellma(?:\/.*)?/,
+        /^vellma(?:\/.*)?/,
       ],
     }),
   ],
@@ -24,10 +24,10 @@ export default defineConfig({
     alias: {
       '#data': join(root, './src/data'),
       '#globals': join(root, './src/globals'),
-      'ellma/integrations': join(root, './integrations/src'),
-      'ellma/models': join(root, './models/src'),
-      'ellma/peripherals': join(root, './peripherals/src'),
-      'ellma': join(root, './src'),
+      'vellma/integrations': join(root, './integrations/src'),
+      'vellma/models': join(root, './models/src'),
+      'vellma/peripherals': join(root, './peripherals/src'),
+      'vellma': join(root, './src'),
     },
   },
   root,

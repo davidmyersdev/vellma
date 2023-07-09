@@ -1,5 +1,5 @@
-import { type Message, id as makeId, messageFactory } from 'ellma'
-import { type Peripherals, useStorage } from 'ellma/peripherals'
+import { type Message, id as makeId, messageFactory } from 'vellma'
+import { type Peripherals, useStorage } from 'vellma/peripherals'
 import { type Model } from '..'
 
 export type ChatIntegration = {

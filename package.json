@@ -1,18 +1,18 @@
 {
-  "name": "ellma",
+  "name": "vellma",
   "type": "module",
   "version": "0.2.3",
   "description": "Virtual, Eloquent LLM Assistants",
   "author": "David Myers <hello@davidmyers.dev>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/davidmyersdev",
-  "homepage": "https://github.com/davidmyersdev/ellma",
+  "homepage": "https://github.com/davidmyersdev/vellma",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davidmyersdev/ellma.git"
+    "url": "git+https://github.com/davidmyersdev/vellma.git"
   },
   "bugs": {
-    "url": "https://github.com/davidmyersdev/ellma/issues"
+    "url": "https://github.com/davidmyersdev/vellma/issues"
   },
   "keywords": [
     "chat",
@@ -75,7 +75,7 @@
     "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
     "clean:models": "rimraf ./models/dist ./models/types",
     "clean:peripherals": "rimraf ./peripherals/dist ./peripherals/types",
-    "ellma": "vite-node --script ./ellma.ts",
+    "vellma": "vite-node --script ./vellma.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "playground:docs-qa": "vite-node ./playground/docs-qa/index.ts",

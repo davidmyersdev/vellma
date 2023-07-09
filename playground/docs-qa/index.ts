@@ -2,10 +2,10 @@ import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
-import { type Vector } from 'ellma'
-import { openai } from 'ellma/integrations'
-import { useChat, useEmbedding } from 'ellma/models'
-import { fileStorage, terminalIo, useIo, useStorage } from 'ellma/peripherals'
+import { type Vector } from 'vellma'
+import { openai } from 'vellma/integrations'
+import { useChat, useEmbedding } from 'vellma/models'
+import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { similarity } from 'ml-distance'
 
@@ -17,7 +17,7 @@ const io = useIo(terminalIo())
 const storage = useStorage(fileStorage(dbFile))
 const peripherals = { io, storage }
 
-// Ellma initialization
+// Vellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, peripherals })
 const { model: embeddingModel } = useEmbedding({ integration, peripherals })
 

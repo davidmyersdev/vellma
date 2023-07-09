@@ -1,4 +1,4 @@
-import { vector } from 'ellma'
+import { vector } from 'vellma'
 import { type ApiEmbeddingConfig, embedding as embeddingApi } from '../api'
 
 export type EmbeddingConfig = Omit<ApiEmbeddingConfig, 'input' | 'user'> & {

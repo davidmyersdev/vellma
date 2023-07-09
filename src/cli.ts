@@ -12,7 +12,7 @@ const filterArgs = (args: string[]) => {
 }
 
 export const cli = (args: string[]) => {
-  const definition = cac('ellma')
+  const definition = cac('vellma')
   // const { apiKey } = env()
   // const globals = useGlobals({
   //   integrations: {

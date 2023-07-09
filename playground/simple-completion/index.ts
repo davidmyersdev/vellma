@@ -1,9 +1,9 @@
 import chalk from 'chalk'
-import { openai } from 'ellma/integrations'
-import { useCompletion } from 'ellma/models'
-import { terminalIo, useIo } from 'ellma/peripherals'
+import { openai } from 'vellma/integrations'
+import { useCompletion } from 'vellma/models'
+import { terminalIo, useIo } from 'vellma/peripherals'
 
-// Ellma initialization
+// Vellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
 const { model } = useCompletion({ integration })
 const io = useIo(terminalIo())

@@ -1,4 +1,4 @@
-import { type Message, type Role, message as toMessage, zRole } from 'ellma'
+import { type Message, type Role, message as toMessage, zRole } from 'vellma'
 import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chatApi } from '../api'
 
 export type AdapterChatConfig = Omit<ApiChatConfig, 'messages'> & {

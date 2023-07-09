@@ -9,7 +9,7 @@ const root = dirname(fileURLToPath(import.meta.url))
 export default defineConfig({
   input: join(root, './tmp/types/src/index.d.ts'),
   external: [
-    /^ellma(?:\/.+)?$/,
+    /^vellma(?:\/.+)?$/,
   ],
   output: {
     file: join(root, './dist/index.d.ts'),

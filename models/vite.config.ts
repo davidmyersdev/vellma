@@ -17,13 +17,13 @@ export default defineConfig({
   plugins: [
     externalizeDeps({
       include: [
-        /^ellma(?:\/.*)?/,
+        /^vellma(?:\/.*)?/,
       ],
     }),
   ],
   resolve: {
     alias: {
-      ellma: join(root, '../src'),
+      vellma: join(root, '../src'),
     },
   },
   root,

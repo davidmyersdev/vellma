@@ -1,5 +1,5 @@
-import { type Vector, id as makeId } from 'ellma'
-import { type Peripherals, useCrypto, useStorage } from 'ellma/peripherals'
+import { type Vector, id as makeId } from 'vellma'
+import { type Peripherals, useCrypto, useStorage } from 'vellma/peripherals'
 import { type Model } from '..'
 
 export type EmbeddingIntegration = {

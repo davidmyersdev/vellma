@@ -1,4 +1,4 @@
-# `ellma` <!-- omit in toc -->
+# `vellma` <!-- omit in toc -->
 
 Virtual, Eloquent LLM Assistants
 
@@ -12,13 +12,13 @@ Virtual, Eloquent LLM Assistants
   - [Models](#models)
     - [Embedding models](#embedding-models)
   - [Integrations](#integrations)
-- [How to use `ellma`](#how-to-use-ellma)
-- [How to contribute to `ellma`](#how-to-contribute-to-ellma)
+- [How to use `vellma`](#how-to-use-vellma)
+- [How to contribute to `vellma`](#how-to-contribute-to-vellma)
   - [Set up your development environment](#set-up-your-development-environment)
 
 ## Concepts
 
-To get the best out of `ellma`, there are some concepts that you should understand.
+To get the best out of `vellma`, there are some concepts that you should understand.
 
 ### Interfaces and adapters
 
@@ -92,26 +92,26 @@ Example storage integrations
 - Google Cloud Storage
 - Supabase
 
-## How to use `ellma`
+## How to use `vellma`
 
 Install it with your preferred package manager.
 
 ```bash
 # npm
-npm i ellma
+npm i vellma
 
 # pnpm
-pnpm add ellma
+pnpm add vellma
 
 # yarn
-yarn add ellma
+yarn add vellma
 ```
 
 Import (or create) an integration, and use it to initialize a model. Use the model to generate output.
 
 ```ts
-import { useChat } from 'ellma'
-import { openai } from 'ellma/integrations'
+import { useChat } from 'vellma'
+import { openai } from 'vellma/integrations'
 
 const integration = openai({ apiKey: 'your-private-api-key' })
 const { factory, model } = useChat({ integration })
@@ -124,7 +124,7 @@ console.log(reply.text) // 'Good morning! How may I assist you today?'
 
 For more examples, check out the [`playground`](./playground) directory.
 
-## How to contribute to `ellma`
+## How to contribute to `vellma`
 
 Things are still changing, but I recommend you read through the "Concepts" section above before you get started.
 
@@ -133,27 +133,27 @@ Things are still changing, but I recommend you read through the "Concepts" secti
 Clone the repo to your machine.
 
 ```bash
-git clone git@github.com:davidmyersdev/ellma.git
+git clone git@github.com:davidmyersdev/vellma.git
 ```
 
 Install dependencies with `pnpm`.
 
 ```bash
-# ~/path/to/ellma
+# ~/path/to/vellma
 pnpm i
 ```
 
 Create your `.env` file.
 
 ```bash
-# ~/path/to/ellma
+# ~/path/to/vellma
 cp .env.example .env
 ```
 
 Add your OpenAI API key and (optionally) add your organization and user keys if you have them.
 
 ```bash
-# ~/path/to/ellma/.env
+# ~/path/to/vellma/.env
 VITE_OPENAI_API_KEY=your-api-key
 # The rest are optional.
 VITE_OPENAI_ORGANIZATION_ID=
@@ -163,6 +163,6 @@ VITE_OPENAI_USER_ID=
 Run a playground example `pnpm vite-node ./playground/<example>.ts`. To try out the basic chat implementation, run the following.
 
 ```bash
-# ~/path/to/ellma
+# ~/path/to/vellma
 pnpm vite-node ./playground/chat-basic.ts
 ```

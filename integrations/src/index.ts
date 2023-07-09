@@ -1,4 +1,4 @@
-import { type ChatIntegration, type CompletionIntegration, type EmbeddingIntegration } from 'ellma/models'
+import { type ChatIntegration, type CompletionIntegration, type EmbeddingIntegration } from 'vellma/models'
 import { openai } from './openai'
 
 export type Integration = ChatIntegration & CompletionIntegration & EmbeddingIntegration

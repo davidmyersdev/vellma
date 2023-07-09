@@ -1,9 +1,9 @@
-// import { type IntegrationInitializers, type Integrations, type IntegrationConfig } from 'ellma/integrations'
-// import { type ChatModelConfig, type ModelConfig } from 'ellma/models'
-// import { type PeripheralAdapters, type Peripherals, usePeripherals } from 'ellma/peripherals'
-// import { fetchAdapter } from 'ellma/peripherals/http/adapters/fetch'
-// import { callbacksIo } from 'ellma/peripherals/io/adapters/callbacks'
-// import { inMemoryStorage } from 'ellma/peripherals/storage/adapters/memory'
+// import { type IntegrationInitializers, type Integrations, type IntegrationConfig } from 'vellma/integrations'
+// import { type ChatModelConfig, type ModelConfig } from 'vellma/models'
+// import { type PeripheralAdapters, type Peripherals, usePeripherals } from 'vellma/peripherals'
+// import { fetchAdapter } from 'vellma/peripherals/http/adapters/fetch'
+// import { callbacksIo } from 'vellma/peripherals/io/adapters/callbacks'
+// import { inMemoryStorage } from 'vellma/peripherals/storage/adapters/memory'
 
 // export type GlobalConfig = {
 //   integrations: IntegrationInitializers,

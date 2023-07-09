@@ -9,7 +9,7 @@ const moduleName = basename(root)
 export default defineConfig({
   input: join(root, `../tmp/types/${moduleName}/src/index.d.ts`),
   external: [
-    /^ellma(?:\/.+)?$/,
+    /^vellma(?:\/.+)?$/,
   ],
   output: {
     file: join(root, './dist/index.d.ts'),

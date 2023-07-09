@@ -1,10 +1,10 @@
 import { join, resolve } from 'node:path'
 import chalk from 'chalk'
-import { openai } from 'ellma/integrations'
-import { useEmbedding } from 'ellma/models'
-import { fileStorage, terminalIo, useIo, useStorage } from 'ellma/peripherals'
+import { openai } from 'vellma/integrations'
+import { useEmbedding } from 'vellma/models'
+import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
 
-// Ellma initialization
+// Vellma initialization
 const dbFile = resolve(join('tmp', 'playground-basic-embedding.json'))
 const io = useIo(terminalIo())
 const storage = useStorage(fileStorage(dbFile))
