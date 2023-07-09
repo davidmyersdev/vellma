@@ -2,7 +2,7 @@
   "name": "ellma",
   "type": "module",
   "version": "0.2.3",
-  "description": "Easy LLM Assistants",
+  "description": "Eloquent LLM Assistants",
   "author": "David Myers <hello@davidmyers.dev>",
   "license": "MIT",
   "funding": "https://github.com/sponsors/davidmyersdev",
