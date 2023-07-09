@@ -6,7 +6,7 @@ const defaultPath = () => {
   return resolve(join('tmp', `${Date.now()}-storage.json`))
 }
 
-export const storageFile = (path = defaultPath()): StorageAdapter => {
+export const fileStorage = (path = defaultPath()): StorageAdapter => {
   const store: Record<string, any> = {}
 
   if (existsSync(path)) {
