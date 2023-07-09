@@ -82,6 +82,7 @@
     "playground:simple-chat": "vite-node ./playground/simple-chat/index.ts",
     "playground:simple-completion": "vite-node ./playground/simple-completion/index.ts",
     "playground:simple-embedding": "vite-node ./playground/simple-embedding/index.ts",
+    "playground:va": "vite-node ./playground/va/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "types": "tsc && run-p types:*",
     "types:core": "rollup -c ./types.config.js",
