@@ -1,4 +1,4 @@
-import { memoryAdapter } from './adapters/memory'
+import { inMemoryStorage } from './adapters/memory'
 
 export * from './adapters'
 
@@ -29,10 +29,10 @@ export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter =
 /**
  * Create an object for interacting with storage.
  *
- * @param adapter The adapter to use for storing data. Defaults to `memoryAdapter()`.
+ * @param adapter The adapter to use for storing data. Defaults to `inMemoryStorage()`.
  * @returns A StoragePeripheral object.
  */
-export const useStorage = (adapter: StorageAdapter = memoryAdapter()): StoragePeripheral => {
+export const useStorage = (adapter: StorageAdapter = inMemoryStorage()): StoragePeripheral => {
   return {
     ...adapter,
     /**

@@ -1,6 +1,6 @@
 import { type StorageAdapter, withDefaults } from '..'
 
-export const memoryAdapter = (): StorageAdapter => {
+export const inMemoryStorage = (): StorageAdapter => {
   const store = new Map<any, any>()
 
   return withDefaults({

@@ -3,7 +3,7 @@
 // import { type PeripheralAdapters, type Peripherals, usePeripherals } from 'ellma/peripherals'
 // import { fetchAdapter } from 'ellma/peripherals/http/adapters/fetch'
 // import { callbacksIo } from 'ellma/peripherals/io/adapters/callbacks'
-// import { memoryAdapter } from 'ellma/peripherals/storage/adapters/memory'
+// import { inMemoryStorage } from 'ellma/peripherals/storage/adapters/memory'
 
 // export type GlobalConfig = {
 //   integrations: IntegrationInitializers,
@@ -50,7 +50,7 @@
 //     peripherals: {
 //       http: config.peripherals?.http || fetchAdapter(),
 //       io: config.peripherals?.io || callbacksIo(),
-//       storage: config.peripherals?.storage || memoryAdapter(),
+//       storage: config.peripherals?.storage || inMemoryStorage(),
 //     },
 //   }
 // }
@@ -68,7 +68,7 @@
 //     peripherals: usePeripherals({
 //       http: config.peripherals.http || fetchAdapter(),
 //       io: config.peripherals.io || callbacksIo(),
-//       storage: config.peripherals.storage || memoryAdapter(),
+//       storage: config.peripherals.storage || inMemoryStorage(),
 //     }),
 //   }
 // }
