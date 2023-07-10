@@ -4,6 +4,7 @@ export type Role = z.infer<typeof zRole>
 
 export const zRole = z.enum([
   'assistant',
+  'function',
   'human',
   'system',
 ])

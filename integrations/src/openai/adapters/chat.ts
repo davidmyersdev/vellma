@@ -8,27 +8,45 @@ export type AdapterChatConfig = Omit<ApiChatConfig, 'messages'> & {
 const toExternalMessage = (message: Message): ApiChatMessage => {
   return {
     content: message.text,
+    function_call: message.function
+      ? {
+          arguments: message.function.args,
+          name: message.function.name,
+        }
+      : undefined,
+    name: message.name,
     role: toExternalRole(message.role),
   }
 }
 
 const toExternalRole = (role: Role): ApiChatRole => {
   if (role === zRole.enum.assistant) return 'assistant'
+  if (role === zRole.enum.function) return 'function'
   if (role === zRole.enum.human) return 'user'
   if (role === zRole.enum.system) return 'system'
 
   throw new Error(`[openai][chat] invalid role: ${role}`)
 }
 
+const toInternalFunction = (function_call: ApiChatMessage['function_call']) => {
+  return {
+    args: function_call!.arguments,
+    name: function_call!.name,
+  }
+}
+
 const toInternalMessage = (message: ApiChatMessage): Message => {
   return toMessage({
-    text: message.content,
+    function: message.function_call ? toInternalFunction(message.function_call) : undefined,
+    name: message.name,
     role: toInternalRole(message.role),
+    text: message.content || '',
   })
 }
 
 const toInternalRole = (role: ApiChatRole): Role => {
   if (role === 'assistant') return zRole.enum.assistant
+  if (role === 'function') return zRole.enum.function
   if (role === 'user') return zRole.enum.human
   if (role === 'system') return zRole.enum.system
 
@@ -38,6 +56,7 @@ const toInternalRole = (role: ApiChatRole): Role => {
 export const chat = async (config: AdapterChatConfig) => {
   const messages = config.messages.map(toExternalMessage)
   const { json } = await chatApi({ ...config, messages })
+
   const { message: newExternalMessage } = json.choices[0]
 
   if (!newExternalMessage) {

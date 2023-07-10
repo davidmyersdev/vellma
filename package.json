@@ -83,6 +83,7 @@
     "playground:simple-completion": "vite-node ./playground/simple-completion/index.ts",
     "playground:simple-embedding": "vite-node ./playground/simple-embedding/index.ts",
     "playground:va": "vite-node ./playground/va/index.ts",
+    "playground:va-function-calling": "vite-node ./playground/va-function-calling/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "types": "tsc && run-p types:*",
     "types:core": "rollup -c ./types.config.js",
@@ -97,7 +98,7 @@
     "langchain": "^0.0.102",
     "ml-distance": "^4.0.1",
     "nanoid": "^4.0.2",
-    "openai": "^3.2.1",
+    "openai": "^3.3.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {

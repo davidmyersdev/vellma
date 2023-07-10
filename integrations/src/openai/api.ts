@@ -1,3 +1,4 @@
+import { type JsonLike, zJsonLike } from 'vellma'
 import { type Peripherals, useHttp, useIo } from 'vellma/peripherals'
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { z } from 'zod'
@@ -20,14 +21,19 @@ export const zApiChatModel = z.enum([
 
 export const zApiChatRole = z.enum([
   'assistant',
+  'function',
   'system',
   'user',
 ])
 
 export const zApiChatMessage = z.object({
-  role: zApiChatRole,
   content: z.string(),
+  function_call: z.object({
+    name: z.string(),
+    arguments: zJsonLike,
+  }).optional(),
   name: z.string().optional(),
+  role: zApiChatRole,
 })
 
 export const baseUrl = 'https://api.openai.com' as const
@@ -77,6 +83,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
 
 export type ApiChatConfig = ApiConfig & {
   messages: ApiChatMessage[],
+  functions?: JsonLike[],
   model?: ApiChatModel,
 }
 export type ApiChatResponse = ApiResponse<CreateChatCompletionResponse>
@@ -84,9 +91,9 @@ export type ApiChatResponseData = CreateChatCompletionResponse
 
 export const chat = async (config: ApiChatConfig) => {
   const api = apiClient(config)
-  const { messages, model = 'gpt-4' } = config
+  const { functions, messages, model = 'gpt-4' } = config
 
-  const response = await api.post('/v1/chat/completions', { body: { messages, model } }) as ApiChatResponse
+  const response = await api.post('/v1/chat/completions', { body: { functions, messages, model } }) as ApiChatResponse
   const json = await response.json() as ApiChatResponseData
 
   return {

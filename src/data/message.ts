@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { id, zId } from './id'
+import { zJsonLike } from './json'
 import { zRole } from './role'
 import { timestamp, zTimestamp } from './timestamp'
 
@@ -11,13 +12,33 @@ export type SystemMessage = z.infer<typeof zSystemMessage>
 export const zMessage = z.object({
   id: zId.default(() => id()),
   createdAt: zTimestamp.default(() => timestamp()),
+  function: z.object({
+    args: zJsonLike,
+    // Todo: Maybe enum the function list?
+    name: z.string(),
+  }).optional(),
+  name: z.string().optional(),
   role: zRole,
-  text: z.string(),
+  text: z.string().optional().default(''),
   userId: z.string().optional(),
 })
 
 export const zAssistantMessage = zMessage.extend({
   role: z.literal(zRole.enum.assistant).default(zRole.enum.assistant),
+})
+
+export const zAssistantFunctionMessage = zAssistantMessage.extend({
+  function: z.object({
+    args: zJsonLike,
+    // Todo: Maybe enum the function list?
+    name: z.string(),
+  }),
+  text: z.string().optional(),
+})
+
+export const zFunctionMessage = zMessage.extend({
+  name: z.string(),
+  role: z.literal(zRole.enum.function).default(zRole.enum.function),
 })
 
 export const zHumanMessage = zMessage.extend({
@@ -35,6 +56,9 @@ export const message = (thing: unknown): Message => {
 export const messageFactory = {
   assistant: (thing: unknown): Message => {
     return zAssistantMessage.parse(thing)
+  },
+  function: (thing: unknown): Message => {
+    return zFunctionMessage.parse(thing)
   },
   human: (thing: unknown): Message => {
     return zHumanMessage.parse(thing)
