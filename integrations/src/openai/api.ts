@@ -1,4 +1,4 @@
-import { type JsonLike, zJsonLike } from 'vellma'
+import { type JsonLike } from 'vellma'
 import { type Peripherals, useHttp, useIo } from 'vellma/peripherals'
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { z } from 'zod'
@@ -27,10 +27,10 @@ export const zApiChatRole = z.enum([
 ])
 
 export const zApiChatMessage = z.object({
-  content: z.string(),
+  content: z.string().optional(),
   function_call: z.object({
-    name: z.string(),
-    arguments: zJsonLike,
+    name: z.string().optional(),
+    arguments: z.string().optional(),
   }).optional(),
   name: z.string().optional(),
   role: zApiChatRole,

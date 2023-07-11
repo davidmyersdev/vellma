@@ -1,4 +1,4 @@
-import { type Message, type Role, message as toMessage, zRole } from 'vellma'
+import { type JsonLike, type Message, type Role, message as toMessage, zRole } from 'vellma'
 import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chatApi } from '../api'
 
 export type AdapterChatConfig = Omit<ApiChatConfig, 'messages'> & {
@@ -10,7 +10,7 @@ const toExternalMessage = (message: Message): ApiChatMessage => {
     content: message.text,
     function_call: message.function
       ? {
-          arguments: message.function.args,
+          arguments: JSON.stringify(message.function.args, null, 2),
           name: message.function.name,
         }
       : undefined,
@@ -29,9 +29,12 @@ const toExternalRole = (role: Role): ApiChatRole => {
 }
 
 const toInternalFunction = (function_call: ApiChatMessage['function_call']) => {
+  const args = function_call?.arguments ? (JSON.parse(function_call.arguments) as JsonLike) : undefined
+  const name = function_call?.name
+
   return {
-    args: function_call!.arguments,
-    name: function_call!.name,
+    args,
+    name,
   }
 }
 
