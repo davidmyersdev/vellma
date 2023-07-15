@@ -1,7 +1,7 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig } from 'rollup'
 import alias from '@rollup/plugin-alias'
+import { defineConfig } from 'rollup'
 import dts from 'rollup-plugin-dts'
 
 const root = dirname(fileURLToPath(import.meta.url))
