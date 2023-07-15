@@ -1,5 +1,5 @@
 import { type JsonLike } from 'vellma'
-import { type Peripherals, useHttp, useIo } from 'vellma/peripherals'
+import { type Peripherals, useHttp, useLogger } from 'vellma/peripherals'
 import { type CreateChatCompletionResponse, type CreateCompletionResponse, type CreateEmbeddingResponse, type CreateModerationResponse, type ListModelsResponse } from 'openai'
 import { z } from 'zod'
 
@@ -38,7 +38,7 @@ export const zApiChatMessage = z.object({
 
 export const baseUrl = 'https://api.openai.com' as const
 
-export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHttp(), io = useIo() } = {} }: ApiConfig) => {
+export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHttp(), logger = useLogger() } = {} }: ApiConfig) => {
   if (!apiKey) {
     throw new Error('The `apiKey` option is required.')
   }
@@ -54,8 +54,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
 
   return {
     get: async (path: string, { headers = {} }: { headers?: Record<string, string> } = {}) => {
-      // Todo: Replace with logger implementation.
-      await io.write(`[openai] GET ${baseUrl}${path}\n`)
+      await logger.debug(`[integrations][openai] GET ${baseUrl}${path}\n`)
 
       return http.fetch(`${baseUrl}${path}`, {
         method: 'GET',
@@ -66,8 +65,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
       })
     },
     post: async (path: string, { body, headers = {} }: { body?: Record<string, unknown>, headers?: Record<string, string> } = {}) => {
-      // Todo: Replace with logger implementation.
-      await io.write(`[openai] POST ${baseUrl}${path}\n`)
+      await logger.debug(`[integrations][openai] POST ${baseUrl}${path}\n`)
 
       return http.fetch(`${baseUrl}${path}`, {
         method: 'POST',

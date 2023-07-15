@@ -15,8 +15,11 @@ const io = useIo(terminalIo())
 // Chat loop
 while (true) {
   const humanAnswer = await io.prompt(`${labelHuman}\n`)
+
+  await io.write(`\n`)
+
   const humanMessage = factory.human({ text: humanAnswer })
   const assistantMessage = await model.generate(humanMessage)
 
-  await io.write(`\n${labelAssistant}\n${assistantMessage.text}\n\n`)
+  await io.write(`${labelAssistant}\n${assistantMessage.text}\n\n`)
 }

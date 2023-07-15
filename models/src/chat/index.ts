@@ -1,5 +1,5 @@
 import { type JsonLike, type Message, id as makeId, messageFactory } from 'vellma'
-import { type Peripherals, useIo, useStorage } from 'vellma/peripherals'
+import { type Peripherals, useLogger, useStorage } from 'vellma/peripherals'
 import { type Model } from '..'
 
 export type ChatIntegration = {
@@ -15,8 +15,9 @@ export type ChatModelConfig = {
   retries?: number,
 }
 
-export const useChat = ({ functions, integration, peripherals: { io = useIo(), storage = useStorage() } = {}, retries = 2 }: ChatModelConfig) => {
+export const useChat = ({ functions, integration, peripherals = {}, retries = 2 }: ChatModelConfig) => {
   const id = makeId()
+  const { logger = useLogger(), storage = useStorage() } = peripherals
 
   const add = async (message: Message) => {
     await storage.set(id, [...await get(id), message])
@@ -42,17 +43,17 @@ export const useChat = ({ functions, integration, peripherals: { io = useIo(), s
     // Initial attempt.
     try {
       return await attemptGenerate(allMessages)
-    } catch (_initialError) {
-      // Todo: Add logger.
+    } catch (error) {
+      await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }
 
-    // Retry as many times as is configured.
+    // Reattempt as many times as is allowed.
     for (let i = 0; i < retries; i++) try {
-      await io.write(`Retrying... (${i + 1}/${retries})\n`)
+      await logger.debug(`[models][chat] Reattempting to generate message... (${i + 1}/${retries})`)
 
       return await attemptGenerate(allMessages)
-    } catch (_retryError) {
-      // Todo: Add logger.
+    } catch (error) {
+      await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }
 
     throw new Error('[models][chat] exceeded maximum retries.')
