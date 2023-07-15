@@ -1,11 +1,3 @@
 {
-  "extends": "artisan",
-  "overrides": [
-    {
-      "files": ["./src/actions/**/*"],
-      "rules": {
-        "no-console": ["off"]
-      }
-    }
-  ]
+  "extends": "artisan"
 }
