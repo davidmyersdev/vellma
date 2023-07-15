@@ -1,4 +1,4 @@
-import { type Peripherals, useLogger } from 'vellma/peripherals'
+import { type Peripherals, useLogger, useStorage } from 'vellma/peripherals'
 import { tool } from '..'
 import { format } from './linter'
 
@@ -17,7 +17,9 @@ const wrapCode = (code: string) => {
   `
 }
 
-export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: CodeRunnerConfig = {}) => {
+export const codeRunnerTool = ({ peripherals = {} }: CodeRunnerConfig = {}) => {
+  const { logger = useLogger(), storage = useStorage() } = peripherals
+
   return tool({
     name: 'codeRunner',
     description: 'A function that can run JavaScript code in a sandbox. All code is wrapped in an async function, so you can use await and you must return the final result. Please make sure the code string you provide is JSON encoded.',
@@ -30,6 +32,15 @@ export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: C
     handler: async ({ code }: { code: string }) => {
       const { default: ivm } = await import('isolated-vm')
       const formattedCode = await format(code)
+
+      // Attempt to store the generated code.
+      try {
+        const storedCode = await storage.get<string, string[]>('tools:code-runner', [])
+
+        await storage.set('tools:code-runner', [...storedCode, formattedCode])
+      } catch (error) {
+        await logger.error(`[tools][code-runner] failed to store code: ${String(error)}`)
+      }
 
       await logger.debug(`[tools][code-runner] input:\n${formattedCode}\n`)
 
