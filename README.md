@@ -160,9 +160,9 @@ VITE_OPENAI_ORGANIZATION_ID=
 VITE_OPENAI_USER_ID=
 ```
 
-Run a playground example `pnpm vite-node ./playground/<example>.ts`. To try out the basic chat implementation, run the following.
+Run a playground example `pnpm playground:<example>`. To try out the basic chat implementation, run the following.
 
 ```bash
 # ~/path/to/vellma
-pnpm vite-node ./playground/chat-basic.ts
+pnpm playground:simple-chat
 ```
