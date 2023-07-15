@@ -43,7 +43,7 @@ export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: C
 
       const output = await vmScript.run(vmContext, {
         promise: true,
-        timeout: 10000,
+        timeout: 5000,
       })
 
       await logger.debug(`[tools][code-runner] output:\n${String(output).trim()}\n`)
