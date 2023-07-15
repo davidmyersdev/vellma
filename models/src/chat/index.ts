@@ -1,5 +1,6 @@
-import { type JsonLike, type Message, id as makeId, messageFactory } from 'vellma'
+import { type Message, id as makeId, messageFactory } from 'vellma'
 import { type Peripherals, useLogger, useStorage } from 'vellma/peripherals'
+import { type Tool } from 'vellma/tools'
 import { type Model } from '..'
 
 export type ChatIntegration = {
@@ -10,12 +11,12 @@ export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 
 export type ChatModelConfig = {
   integration: ChatIntegration,
-  functions?: JsonLike[],
   peripherals?: Partial<Peripherals>,
   retries?: number,
+  tools?: Tool[],
 }
 
-export const useChat = ({ functions, integration, peripherals = {}, retries = 2 }: ChatModelConfig) => {
+export const useChat = ({ integration, peripherals = {}, retries = 2, tools = [] }: ChatModelConfig) => {
   const id = makeId()
   const { logger = useLogger(), storage = useStorage() } = peripherals
 
@@ -23,10 +24,40 @@ export const useChat = ({ functions, integration, peripherals = {}, retries = 2 
     await storage.set(id, [...await get(id), message])
   }
 
+  const getFnResult = async (tool: Tool, toolArgsJson: string) => {
+    try {
+      const args = JSON.parse(toolArgsJson)
+
+      return await tool.handler(args)
+    } catch (error: unknown) {
+      if (error instanceof SyntaxError && /json/i.test(error.message)) {
+        return 'The arguments you provided are not valid JSON. Please try calling this function again with valid JSON.'
+      }
+
+      return error
+    }
+  }
+
+  const handleTools = async (fnCall: NonNullable<Message['function']>): Promise<Message> => {
+    const tool = tools.find(t => t.schema.name === fnCall.name)
+
+    if (!tool) {
+      throw new Error('[models][chat] no tool found for fn call')
+    }
+
+    const args = fnCall.args as any
+    const functionResult = await getFnResult(tool, args)
+    const functionMessage = messageFactory.function({ name: tool.schema.name, text: JSON.stringify(functionResult, null, 2) })
+
+    return await generate(functionMessage)
+  }
+
   const attemptGenerate = async (messages: Message[]) => {
-    const reply = await integration.chat(messages, { functions })
+    const reply = await integration.chat(messages, { tools })
 
     await add(reply)
+
+    if (reply.function) return await handleTools(reply.function)
 
     return reply
   }

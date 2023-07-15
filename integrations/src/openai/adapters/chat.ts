@@ -1,8 +1,10 @@
 import { type JsonLike, type Message, type Role, message as toMessage, zRole } from 'vellma'
+import { type Tool } from 'vellma/tools'
 import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chatApi } from '../api'
 
-export type AdapterChatConfig = Omit<ApiChatConfig, 'messages'> & {
+export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & {
   messages: Message[],
+  tools: Tool[],
 }
 
 const toExternalMessage = (message: Message): ApiChatMessage => {
@@ -29,7 +31,9 @@ const toExternalRole = (role: Role): ApiChatRole => {
 }
 
 const toInternalFunction = (function_call: ApiChatMessage['function_call']) => {
-  const args = function_call?.arguments ? (JSON.parse(function_call.arguments) as JsonLike) : undefined
+  // console.log(function_call.arguments)
+  // const args = function_call?.arguments ? (JSON.parse(function_call.arguments) as JsonLike) : undefined
+  const args = function_call?.arguments
   const name = function_call?.name
 
   return {
@@ -56,15 +60,43 @@ const toInternalRole = (role: ApiChatRole): Role => {
   throw new Error(`[openai][chat] invalid role: ${role}`)
 }
 
-export const chat = async (config: AdapterChatConfig) => {
+const toolsToFunctions = (tools: Tool[]): JsonLike[] => {
+  const functions = tools.map(({ schema }) => {
+    const required: string[] = []
+    const properties = Object.entries(schema.args).reduce<Record<string, JsonLike>>((props, [key, value]) => {
+      if (value.required) required.push(key)
+
+      props[key] = value
+
+      return props
+    }, {})
+
+    return {
+      name: schema.name,
+      description: schema.description || null,
+      parameters: {
+        type: 'object',
+        properties,
+        required,
+      },
+    }
+  })
+
+  return functions
+}
+
+export const chat = async ({ tools, ...config }: AdapterChatConfig) => {
   const messages = config.messages.map(toExternalMessage)
-  const { json } = await chatApi({ ...config, messages })
+  const functions = tools?.length ? toolsToFunctions(tools) : undefined
+  const { json } = await chatApi({ ...config, functions, messages })
 
-  const { message: newExternalMessage } = json.choices[0]
+  try {
+    const { message: newExternalMessage } = json.choices[0]
 
-  if (!newExternalMessage) {
+    return toInternalMessage(newExternalMessage!)
+  } catch (_error) {
+    console.log(json)
+
     throw new Error('[openai][chat] invalid response')
   }
-
-  return toInternalMessage(newExternalMessage)
 }

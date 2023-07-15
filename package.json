@@ -46,6 +46,11 @@
       "types": "./peripherals/dist/index.d.ts",
       "require": "./peripherals/dist/index.cjs",
       "import": "./peripherals/dist/index.js"
+    },
+    "./tools": {
+      "types": "./tools/dist/index.d.ts",
+      "require": "./tools/dist/index.cjs",
+      "import": "./tools/dist/index.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -62,7 +67,10 @@
     "models/package.json",
     "peripherals/dist",
     "peripherals/dist/**/*",
-    "peripherals/package.json"
+    "peripherals/package.json",
+    "tools/dist",
+    "tools/dist/**/*",
+    "tools/package.json"
   ],
   "scripts": {
     "build": "run-s clean && run-p build:* && run-s types",
@@ -70,11 +78,13 @@
     "build:integrations": "vite build ./integrations",
     "build:models": "vite build ./models",
     "build:peripherals": "vite build ./peripherals",
+    "build:tools": "vite build ./tools",
     "clean": "run-p clean:*",
     "clean:core": "rimraf ./dist ./types",
     "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
     "clean:models": "rimraf ./models/dist ./models/types",
     "clean:peripherals": "rimraf ./peripherals/dist ./peripherals/types",
+    "clean:tools": "rimraf ./tools/dist ./tools/types",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "playground:docs-qa": "vite-node ./playground/docs-qa/index.ts",
@@ -88,12 +98,14 @@
     "types:core": "rollup -c ./types.config.js",
     "types:integrations": "rollup -c ./integrations/types.config.js",
     "types:models": "rollup -c ./models/types.config.js",
-    "types:peripherals": "rollup -c ./peripherals/types.config.js"
+    "types:peripherals": "rollup -c ./peripherals/types.config.js",
+    "types:tools": "rollup -c ./tools/types.config.js"
   },
   "dependencies": {
     "chalk": "^5.2.0",
     "cross-fetch": "^3.1.5",
     "events": "^3.3.0",
+    "isolated-vm": "^4.5.0",
     "langchain": "^0.0.102",
     "ml-distance": "^4.0.1",
     "nanoid": "^4.0.2",

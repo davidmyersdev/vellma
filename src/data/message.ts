@@ -13,7 +13,7 @@ export const zMessage = z.object({
   id: zId.default(() => id()),
   createdAt: zTimestamp.default(() => timestamp()),
   function: z.object({
-    args: zJsonLike,
+    args: zJsonLike.or(z.string()),
     // Todo: Maybe enum the function list?
     name: z.string(),
   }).optional(),

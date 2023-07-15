@@ -21,6 +21,8 @@
       "vellma/models/*": ["./models/src/*"],
       "vellma/peripherals": ["./peripherals/src"],
       "vellma/peripherals/*": ["./peripherals/src/*"],
+      "vellma/tools": ["./tools/src"],
+      "vellma/tools/*": ["./tools/src/*"],
       "vellma/*": ["./src/*"]
     },
     "resolveJsonModule": true,

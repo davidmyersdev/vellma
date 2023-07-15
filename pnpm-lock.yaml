@@ -14,6 +14,9 @@ dependencies:
   events:
     specifier: ^3.3.0
     version: 3.3.0
+  isolated-vm:
+    specifier: ^4.5.0
+    version: 4.5.0
   langchain:
     specifier: ^0.0.102
     version: 0.0.102
@@ -2168,6 +2171,12 @@ packages:
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
+
+  /isolated-vm@4.5.0:
+    resolution: {integrity: sha512-Kse0m5t+B9wZQVeTDqzPoX1SIFNTNfyaUxhnCuFgpXL1+5GYJ9GUAN3mpD+ainixGmUXgeYaVBX+QPDjEBBu0w==}
+    engines: {node: '>=10.4.0'}
+    requiresBuild: true
+    dev: false
 
   /jackspeak@2.2.1:
     resolution: {integrity: sha512-MXbxovZ/Pm42f6cDIDkl3xpwv1AGwObKwfmjs2nQePiy85tP3fatofl3FC1aBsOtP/6fq5SbtgHwWcMsLP+bDw==}
