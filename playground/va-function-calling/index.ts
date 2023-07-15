@@ -1,9 +1,8 @@
 import chalk from 'chalk'
-import { type Message } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
 import { terminalIo, useIo } from 'vellma/peripherals'
-import { functions } from './functions'
+import { tools } from './tools'
 
 // Config
 const io = useIo(terminalIo())
@@ -11,7 +10,7 @@ const peripherals = { io }
 
 // Vellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, peripherals })
-const { factory, model } = useChat({ integration, peripherals, functions: Object.values(functions).map(f => f.schema) })
+const { factory, model } = useChat({ integration, peripherals, tools })
 
 // Output helpers
 const labelAssistant = chalk.cyan('Assistant:')
@@ -24,31 +23,14 @@ const welcomeMessage = await model.generate(systemMessage)
 
 await io.write(`${labelAssistant}\n${welcomeMessage.text}\n\n`)
 
-const handleFunctionCall = async (fnCall: NonNullable<Message['function']>): Promise<Message> => {
-  const fn = functions[fnCall.name as keyof typeof functions]
-  const args = fnCall.args as any
-  const functionResult = await fn.handler(args)
-  const functionMessage = factory.function({ name: fn.schema.name, text: JSON.stringify(functionResult, null, 2) })
-  const assistantNextMessage = await model.generate(functionMessage)
-
-  if (assistantNextMessage.function) {
-    return await handleFunctionCall(assistantNextMessage.function)
-  }
-
-  return assistantNextMessage
-}
-
 // Chat loop
 while (true) {
   const humanAnswer = await io.prompt(`${labelHuman}\n`)
+
+  await io.write(`\n`)
+
   const humanMessage = factory.human({ text: humanAnswer })
   const assistantMessage = await model.generate(humanMessage)
 
-  if (assistantMessage.function) {
-    const assistantNextMessage = await handleFunctionCall(assistantMessage.function)
-
-    await io.write(`\n${labelAssistant}\n${assistantNextMessage.text}\n\n`)
-  } else {
-    await io.write(`\n${labelAssistant}\n${assistantMessage.text}\n\n`)
-  }
+  await io.write(`\n${labelAssistant}\n${assistantMessage.text}\n\n`)
 }

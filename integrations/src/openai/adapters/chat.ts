@@ -66,7 +66,11 @@ const toolsToFunctions = (tools: Tool[]): JsonLike[] => {
     const properties = Object.entries(schema.args).reduce<Record<string, JsonLike>>((props, [key, value]) => {
       if (value.required) required.push(key)
 
-      props[key] = value
+      const { required: _required, ...acceptedArgs } = value
+
+      props[key] = {
+        ...acceptedArgs,
+      }
 
       return props
     }, {})
@@ -94,9 +98,7 @@ export const chat = async ({ tools, ...config }: AdapterChatConfig) => {
     const { message: newExternalMessage } = json.choices[0]
 
     return toInternalMessage(newExternalMessage!)
-  } catch (_error) {
-    console.log(json)
-
-    throw new Error('[openai][chat] invalid response')
+  } catch (error) {
+    throw new Error(`[integrations][openai][chat] invalid response: ${error}`)
   }
 }
