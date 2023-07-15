@@ -75,7 +75,6 @@
     "clean:integrations": "rimraf ./integrations/dist ./integrations/types",
     "clean:models": "rimraf ./models/dist ./models/types",
     "clean:peripherals": "rimraf ./peripherals/dist ./peripherals/types",
-    "vellma": "vite-node --script ./vellma.ts",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "playground:docs-qa": "vite-node ./playground/docs-qa/index.ts",

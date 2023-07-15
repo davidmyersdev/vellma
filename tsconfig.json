@@ -14,8 +14,6 @@
     "paths": {
       "#data": ["./src/data"],
       "#data/*": ["./src/data/*"],
-      "#globals": ["./src/globals"],
-      "#globals/*": ["./src/globals/*"],
       "vellma": ["./src/index.ts"],
       "vellma/integrations": ["./integrations/src"],
       "vellma/integrations/*": ["./integrations/src/*"],
