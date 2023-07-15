@@ -6,7 +6,7 @@ import { codeRunnerTool } from 'vellma/tools'
 
 // Config
 const io = useIo(terminalIo())
-const storage = useStorage(fileStorage('./tmp/code.json'))
+const storage = useStorage(fileStorage('./tmp/code-runner.json'))
 const peripherals = { storage }
 
 // Vellma initialization
