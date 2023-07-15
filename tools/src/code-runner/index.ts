@@ -1,6 +1,4 @@
-import chalk from 'chalk'
-import ivm from 'isolated-vm'
-import { type Peripherals, useIo } from 'vellma/peripherals'
+import { type Peripherals, useLogger } from 'vellma/peripherals'
 import { tool } from '..'
 
 export type CodeRunnerConfig = {
@@ -18,7 +16,7 @@ const wrapCode = (code: string) => {
   `
 }
 
-export const codeRunnerTool = ({ peripherals: { io = useIo() } = {} }: CodeRunnerConfig = {}) => {
+export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: CodeRunnerConfig = {}) => {
   return tool({
     name: 'codeRunner',
     description: 'A function that can run JavaScript code in a sandbox. All code is wrapped in an async function, so you can use await and you must return the final result. Please make sure the code string you provide is JSON encoded.',
@@ -29,7 +27,9 @@ export const codeRunnerTool = ({ peripherals: { io = useIo() } = {} }: CodeRunne
       },
     },
     handler: async ({ code }: { code: string }) => {
-      await io.write(chalk.grey(`\n${chalk.bold('[tools][code-runner] input:')}\n${code}\n\n`))
+      const { default: ivm } = await import('isolated-vm')
+
+      await logger.debug(`[tools][code-runner] input:')}\n${code}`)
 
       const vm = new ivm.Isolate({
         memoryLimit: 128,
@@ -39,14 +39,14 @@ export const codeRunnerTool = ({ peripherals: { io = useIo() } = {} }: CodeRunne
         filename: 'code-runner.js',
       })
 
-      const vmResult = await vmScript.run(vmContext, {
+      const output = await vmScript.run(vmContext, {
         promise: true,
         timeout: 10000,
       })
 
-      await io.write(chalk.grey(`${chalk.bold('[tools][code-runner] output:')}\n${vmResult}\n\n`))
+      await logger.debug(`[tools][code-runner] output:')}\n${output}`)
 
-      return vmResult
+      return output
     },
   })
 }
