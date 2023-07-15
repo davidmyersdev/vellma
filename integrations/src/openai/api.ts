@@ -54,7 +54,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
 
   return {
     get: async (path: string, { headers = {} }: { headers?: Record<string, string> } = {}) => {
-      await logger.debug(`[integrations][openai] GET ${baseUrl}${path}\n`)
+      await logger.debug(`[integrations][openai] GET ${baseUrl}${path}`)
 
       return http.fetch(`${baseUrl}${path}`, {
         method: 'GET',
@@ -65,7 +65,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
       })
     },
     post: async (path: string, { body, headers = {} }: { body?: Record<string, unknown>, headers?: Record<string, string> } = {}) => {
-      await logger.debug(`[integrations][openai] POST ${baseUrl}${path}\n`)
+      await logger.debug(`[integrations][openai] POST ${baseUrl}${path}`)
 
       return http.fetch(`${baseUrl}${path}`, {
         method: 'POST',

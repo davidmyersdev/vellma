@@ -103,6 +103,7 @@
     "types:tools": "rollup -c ./tools/types.config.js"
   },
   "dependencies": {
+    "@types/eslint": "^8.44.0",
     "chalk": "^5.2.0",
     "cross-fetch": "^3.1.5",
     "events": "^3.3.0",

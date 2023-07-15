@@ -1,5 +1,6 @@
 import { type Peripherals, useLogger } from 'vellma/peripherals'
 import { tool } from '..'
+import { format } from './linter'
 
 export type CodeRunnerConfig = {
   peripherals?: Partial<Peripherals>,
@@ -28,14 +29,15 @@ export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: C
     },
     handler: async ({ code }: { code: string }) => {
       const { default: ivm } = await import('isolated-vm')
+      const formattedCode = await format(code)
 
-      await logger.debug(`[tools][code-runner] input:')}\n${code}`)
+      await logger.debug(`[tools][code-runner] input:\n${formattedCode}\n`)
 
       const vm = new ivm.Isolate({
         memoryLimit: 128,
       })
       const vmContext = await vm.createContext()
-      const vmScript = await vm.compileScript(wrapCode(code), {
+      const vmScript = await vm.compileScript(wrapCode(formattedCode), {
         filename: 'code-runner.js',
       })
 
@@ -44,7 +46,7 @@ export const codeRunnerTool = ({ peripherals: { logger = useLogger() } = {} }: C
         timeout: 10000,
       })
 
-      await logger.debug(`[tools][code-runner] output:')}\n${output}`)
+      await logger.debug(`[tools][code-runner] output:\n${String(output).trim()}\n`)
 
       return output
     },
