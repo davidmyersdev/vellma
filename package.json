@@ -87,6 +87,7 @@
     "clean:tools": "rimraf ./tools/dist ./tools/types",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
+    "playground:code-runner": "vite-node ./playground/code-runner/index.ts",
     "playground:docs-qa": "vite-node ./playground/docs-qa/index.ts",
     "playground:simple-chat": "vite-node ./playground/simple-chat/index.ts",
     "playground:simple-completion": "vite-node ./playground/simple-completion/index.ts",
