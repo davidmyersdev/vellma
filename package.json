@@ -98,7 +98,7 @@
     "playground:va-function-calling": "vite-node ./playground/va-function-calling/index.ts",
     "test": "run-s test:watch",
     "test:once": "vitest run",
-    "test:watch": "vitest",
+    "test:watch": "vitest watch",
     "types": "tsc && run-p types:*",
     "types:core": "rollup -c ./types.config.js",
     "types:integrations": "rollup -c ./integrations/types.config.js",
