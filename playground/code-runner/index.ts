@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
 import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
-import { codeRunnerTool } from 'vellma/tools'
+import { codeRunnerTool, isolatedVmCodeRunner } from 'vellma/tools'
 
 // Config
 const io = useIo(terminalIo())
@@ -11,7 +11,8 @@ const peripherals = { storage }
 
 // Vellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, peripherals })
-const tools = [codeRunnerTool({ peripherals })]
+const codeRunner = codeRunnerTool(isolatedVmCodeRunner({ peripherals }))
+const tools = [codeRunner]
 const { factory, model } = useChat({ integration, peripherals, tools })
 
 // Output helpers
