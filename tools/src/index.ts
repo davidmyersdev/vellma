@@ -1,4 +1,5 @@
 export * from './code-runner'
+export * from './http-requester'
 
 export type Tool = {
   handler: (...args: any[]) => Promise<any>,
