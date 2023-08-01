@@ -11,7 +11,7 @@ export const valTownCodeRunner = ({ peripherals = {} }: ValTownCodeRunnerConfig 
 
   return tool({
     name: 'codeRunner',
-    description: 'A function that can run JavaScript code in a sandbox. The code string you provide must be JSON encoded, and the final result must be returned at the end (e.g. `const thing = 1 + 1; return thing`).',
+    description: 'A function that runs JavaScript code and returns the result. The code you provide must be JSON encoded, it must be in an ESM format, and the final result must be returned at the end (e.g. `const thing = 1 + 1; return thing`). The code is run in a browser-like environment that has access to the internet and NPM packages, so feel free to use `fetch` or any other utilities you require.',
     args: {
       code: {
         type: 'string',
