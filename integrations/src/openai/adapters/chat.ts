@@ -1,4 +1,5 @@
 import { type JsonLike, type Message, type Role, message as toMessage, zRole } from 'vellma'
+import { useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
 import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chatApi } from '../api'
 
@@ -31,8 +32,6 @@ const toExternalRole = (role: Role): ApiChatRole => {
 }
 
 const toInternalFunction = (function_call: ApiChatMessage['function_call']) => {
-  // console.log(function_call.arguments)
-  // const args = function_call?.arguments ? (JSON.parse(function_call.arguments) as JsonLike) : undefined
   const args = function_call?.arguments
   const name = function_call?.name
 
@@ -90,9 +89,13 @@ const toolsToFunctions = (tools: Tool[]): JsonLike[] => {
 }
 
 export const chat = async ({ tools, ...config }: AdapterChatConfig) => {
+  const { logger = useLogger() } = config.peripherals || {}
+
   const messages = config.messages.map(toExternalMessage)
   const functions = tools?.length ? toolsToFunctions(tools) : undefined
   const { json } = await chatApi({ ...config, functions, messages })
+
+  await logger.debug(`[integrations][openai][chat] response:\n${JSON.stringify(json, null, 2)}`)
 
   try {
     const { message: newExternalMessage } = json.choices[0]
