@@ -81,6 +81,7 @@ export const apiClient = ({ apiKey, organizationId, peripherals: { http = useHtt
 
 export type ApiChatConfig = ApiConfig & {
   messages: ApiChatMessage[],
+  function_call?: 'auto' | 'none' | { name: string },
   functions?: JsonLike[],
   model?: ApiChatModel,
 }
@@ -89,9 +90,9 @@ export type ApiChatResponseData = CreateChatCompletionResponse
 
 export const chat = async (config: ApiChatConfig) => {
   const api = apiClient(config)
-  const { functions, messages, model = 'gpt-4' } = config
+  const { function_call, functions, messages, model = 'gpt-4' } = config
 
-  const response = await api.post('/v1/chat/completions', { body: { functions, messages, model } }) as ApiChatResponse
+  const response = await api.post('/v1/chat/completions', { body: { function_call, functions, messages, model } }) as ApiChatResponse
   const json = await response.json() as ApiChatResponseData
 
   return {

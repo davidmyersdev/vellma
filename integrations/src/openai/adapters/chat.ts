@@ -5,6 +5,7 @@ import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chat
 
 export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & {
   messages: Message[],
+  toolToUse?: string,
   tools: Tool[],
 }
 
@@ -88,12 +89,13 @@ const toolsToFunctions = (tools: Tool[]): JsonLike[] => {
   return functions
 }
 
-export const chat = async ({ tools, ...config }: AdapterChatConfig) => {
+export const chat = async ({ toolToUse, tools, ...config }: AdapterChatConfig) => {
   const { logger = useLogger() } = config.peripherals || {}
 
   const messages = config.messages.map(toExternalMessage)
+  const function_call = toolToUse ? { name: toolToUse } : undefined
   const functions = tools?.length ? toolsToFunctions(tools) : undefined
-  const { json } = await chatApi({ ...config, functions, messages })
+  const { json } = await chatApi({ ...config, function_call, functions, messages })
 
   await logger.debug(`[integrations][openai][chat] response:\n${JSON.stringify(json, null, 2)}`)
 
