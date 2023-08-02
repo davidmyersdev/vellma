@@ -23,6 +23,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '#data': join(root, './src/data'),
+      '#test/utils': join(root, './test/utils'),
       'vellma/integrations': join(root, './integrations/src'),
       'vellma/models': join(root, './models/src'),
       'vellma/peripherals': join(root, './peripherals/src'),
