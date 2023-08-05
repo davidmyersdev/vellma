@@ -11,13 +11,14 @@ export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 
 export type ChatModelConfig = {
   integration: ChatIntegration,
+  model?: string,
   peripherals?: Partial<Peripherals>,
   retries?: number,
   toolToUse?: string,
   tools?: Tool[],
 }
 
-export const useChat = ({ integration, peripherals = {}, retries = 2, toolToUse, tools = [] }: ChatModelConfig) => {
+export const useChat = ({ integration, model, peripherals = {}, retries = 2, toolToUse, tools = [] }: ChatModelConfig) => {
   const id = makeId()
   const { logger = useLogger(), storage = useStorage() } = peripherals
 
@@ -54,7 +55,7 @@ export const useChat = ({ integration, peripherals = {}, retries = 2, toolToUse,
   }
 
   const attemptGenerate = async (messages: Message[]) => {
-    const reply = await integration.chat(messages, { toolToUse, tools })
+    const reply = await integration.chat(messages, { model, peripherals, toolToUse, tools })
 
     await add(reply)
 
