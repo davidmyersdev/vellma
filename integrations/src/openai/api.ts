@@ -16,6 +16,7 @@ export type ApiChatRole = z.infer<typeof zApiChatRole>
 
 export const zApiChatModel = z.enum([
   'gpt-3.5-turbo',
+  'gpt-3.5-turbo-16k',
   'gpt-4',
 ])
 
