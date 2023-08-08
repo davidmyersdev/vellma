@@ -6,12 +6,35 @@ export type ValTownCodeRunnerConfig = {
   peripherals?: Partial<Peripherals>,
 }
 
+// Todo: Maybe convert code runner into a peripheral and allow this tool to use code runner peripherals?
 export const valTownCodeRunner = ({ peripherals = {} }: ValTownCodeRunnerConfig = {}) => {
   const { http = useHttp(), logger = useLogger(), storage = useStorage() } = peripherals
 
   return tool({
-    name: 'codeRunner',
-    description: 'A function that runs JavaScript code and returns the result. The code you provide must be JSON encoded, it must be in an ESM format, and the final result must be returned at the end (e.g. `const thing = 1 + 1; return thing`). The code is run in a browser-like environment that has access to the internet and NPM packages, so feel free to use `fetch` or any other utilities you require.',
+    name: 'code-runner',
+    description: `
+A function that runs JavaScript code and returns the result.
+Use ESM and make sure the result is returned at the end rather than exported.
+Here is an example:
+
+\`\`\`js
+// Use import rather than require
+import cheerio from 'cheerio'
+
+// Async functions are okay
+const getFruit = async ({ url }) => {
+  const response = await fetch(url)
+  const html = response.text()
+  const $ = cheerio.load(html)
+  const text = $('.fruit').text()
+
+  return text
+}
+
+// Make sure you return the result at the end
+return await getFruit({ url: 'https://fruits.example' })
+\`\`\`
+    `.trim(),
     args: {
       code: {
         type: 'string',

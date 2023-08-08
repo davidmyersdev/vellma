@@ -21,7 +21,7 @@ export const isolatedVmCodeRunner = ({ peripherals = {} }: IsolatedVmCodeRunnerC
   const { logger = useLogger(), storage = useStorage() } = peripherals
 
   return tool({
-    name: 'codeRunner',
+    name: 'code-runner',
     description: 'A function that can run JavaScript code in a sandbox. All code is wrapped in an async function, so you can use await and you must return the final result. Please make sure the code string you provide is JSON encoded.',
     args: {
       code: {
