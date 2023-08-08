@@ -17,6 +17,8 @@
       "#test": ["./test"],
       "#test/*": ["./test/*"],
       "vellma": ["./src/index.ts"],
+      "vellma/agents": ["./agents/index.ts"],
+      "vellma/agents/*": ["./agents/*"],
       "vellma/integrations": ["./integrations/src"],
       "vellma/integrations/*": ["./integrations/src/*"],
       "vellma/models": ["./models/src"],
