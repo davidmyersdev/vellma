@@ -49,6 +49,9 @@ devDependencies:
   '@types/node':
     specifier: ^18.16.1
     version: 18.16.1
+  '@types/turndown':
+    specifier: ^5.0.1
+    version: 5.0.1
   cac:
     specifier: ^6.7.14
     version: 6.7.14
@@ -76,6 +79,12 @@ devDependencies:
   rollup-plugin-dts:
     specifier: ^5.3.0
     version: 5.3.0(rollup@3.25.3)(typescript@5.0.4)
+  turndown:
+    specifier: ^7.1.2
+    version: 7.1.2
+  turndown-plugin-gfm:
+    specifier: ^1.0.2
+    version: 1.0.2
   type-hype:
     specifier: ^0.1.0
     version: 0.1.0
@@ -612,6 +621,10 @@ packages:
 
   /@types/semver@7.5.0:
     resolution: {integrity: sha512-G8hZ6XJiHnuhQKR7ZmysCeJWE08o8T0AXtk5darsCaTVsYZhhgUrq53jizaR2FvsoeCwJhlmwTjkXBY5Pn/ZHw==}
+    dev: true
+
+  /@types/turndown@5.0.1:
+    resolution: {integrity: sha512-N8Ad4e3oJxh9n9BiZx9cbe/0M3kqDpOTm2wzj13wdDUxDPjfjloWIJaquZzWE1cYTAHpjOH3rcTnXQdpEfS/SQ==}
     dev: true
 
   /@types/unist@2.0.6:
@@ -1227,6 +1240,10 @@ packages:
     engines: {node: '>= 4'}
     dependencies:
       domelementtype: 2.3.0
+    dev: true
+
+  /domino@2.1.6:
+    resolution: {integrity: sha512-3VdM/SXBZX2omc9JF9nOPCtDaYQ67BGp5CoLpIQlO2KCAPETs8TcDHacF26jXadGbvUteZzRTeos2fhID5+ucQ==}
     dev: true
 
   /domutils@3.1.0:
@@ -3582,6 +3599,16 @@ packages:
     dependencies:
       tslib: 1.14.1
       typescript: 5.0.4
+    dev: true
+
+  /turndown-plugin-gfm@1.0.2:
+    resolution: {integrity: sha512-vwz9tfvF7XN/jE0dGoBei3FXWuvll78ohzCZQuOb+ZjWrs3a0XhQVomJEb2Qh4VHTPNRO4GPZh0V7VRbiWwkRg==}
+    dev: true
+
+  /turndown@7.1.2:
+    resolution: {integrity: sha512-ntI9R7fcUKjqBP6QU8rBK2Ehyt8LAzt3UBT9JR9tgo6GtuKvyUzpayWmeMKJw1DPdXzktvtIT8m2mVXz+bL/Qg==}
+    dependencies:
+      domino: 2.1.6
     dev: true
 
   /type-check@0.4.0:
