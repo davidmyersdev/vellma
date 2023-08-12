@@ -64,6 +64,10 @@ while (true) {
 }
 ```
 
+This example will result in a terminal chat loop that looks something like...
+
+![A screenshot of a terminal-based conversation between an AI language model and a human](./terminal-chat.png)
+
 For more examples, check out the [`playground`](./playground) directory.
 
 ## Concepts
