@@ -4,6 +4,8 @@ Virtual, Eloquent LLM Assistants
 
 ## Overview <!-- omit in toc -->
 
+- [How to use `vellma`](#how-to-use-vellma)
+  - [Example: Terminal chat](#example-terminal-chat)
 - [Concepts](#concepts)
   - [Interfaces and adapters](#interfaces-and-adapters)
     - [Example: Mapping `api.openai.com/v1/chat/completions` to `ChatIntegration`](#example-mapping-apiopenaicomv1chatcompletions-to-chatintegration)
@@ -12,9 +14,57 @@ Virtual, Eloquent LLM Assistants
   - [Models](#models)
     - [Embedding models](#embedding-models)
   - [Integrations](#integrations)
-- [How to use `vellma`](#how-to-use-vellma)
 - [How to contribute to `vellma`](#how-to-contribute-to-vellma)
   - [Set up your development environment](#set-up-your-development-environment)
+
+## How to use `vellma`
+
+Install it with your preferred package manager.
+
+```bash
+# npm
+npm i vellma
+
+# pnpm
+pnpm add vellma
+
+# yarn
+yarn add vellma
+```
+
+### Example: Terminal chat
+
+Let's use the `openai` integration to create a chat model that uses the terminal for IO (input and output).
+
+```ts
+import chalk from 'chalk'
+import { openai } from 'vellma/integrations'
+import { useChat } from 'vellma/models'
+import { terminalIo, useIo } from 'vellma/peripherals'
+
+// Output helpers
+const labelAssistant = chalk.cyan('Assistant:')
+const labelHuman = chalk.green('You:')
+
+// Initialization
+const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
+const { factory, model } = useChat({ integration })
+const io = useIo(terminalIo())
+
+// Chat loop
+while (true) {
+  const humanAnswer = await io.prompt(`${labelHuman}\n`)
+
+  await io.write(`\n`)
+
+  const humanMessage = factory.human({ text: humanAnswer })
+  const assistantMessage = await model.generate(humanMessage)
+
+  await io.write(`${labelAssistant}\n${assistantMessage.text}\n\n`)
+}
+```
+
+For more examples, check out the [`playground`](./playground) directory.
 
 ## Concepts
 
@@ -91,38 +141,6 @@ Example storage integrations
 - AWS S3
 - Google Cloud Storage
 - Supabase
-
-## How to use `vellma`
-
-Install it with your preferred package manager.
-
-```bash
-# npm
-npm i vellma
-
-# pnpm
-pnpm add vellma
-
-# yarn
-yarn add vellma
-```
-
-Import (or create) an integration, and use it to initialize a model. Use the model to generate output.
-
-```ts
-import { useChat } from 'vellma'
-import { openai } from 'vellma/integrations'
-
-const integration = openai({ apiKey: 'your-private-api-key' })
-const { factory, model } = useChat({ integration })
-
-const greeting = factory.human({ text: 'Good morning!' })
-const reply = await model.generate(greeting)
-
-console.log(reply.text) // 'Good morning! How may I assist you today?'
-```
-
-For more examples, check out the [`playground`](./playground) directory.
 
 ## How to contribute to `vellma`
 
