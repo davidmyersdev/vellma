@@ -1,3 +1,6 @@
 {
-  "extends": "artisan"
+  "extends": "artisan",
+  "rules": {
+    "yield-star-spacing": ["error", "after"]
+  }
 }
