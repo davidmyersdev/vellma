@@ -133,7 +133,7 @@
     "@rollup/plugin-alias": "^5.0.0",
     "@types/events": "^3.0.0",
     "@types/lodash": "^4.14.194",
-    "@types/node": "^18.16.1",
+    "@types/node": "^18.17.5",
     "@types/turndown": "^5.0.1",
     "cac": "^6.7.14",
     "dotenv": "^16.0.3",
