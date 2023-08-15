@@ -4,7 +4,7 @@ export const fileLogger = (path: string): LoggerAdapter => {
   const writeLine = async (text: string) => {
     const { appendFileSync } = await import('node:fs')
 
-    appendFileSync(path, text)
+    appendFileSync(path, `${text}\n`)
   }
 
   return {
