@@ -1,7 +1,38 @@
-import { type JsonLike, type Message, type Role, message as toMessage, zRole } from 'vellma'
-import { useLogger } from 'vellma/peripherals'
+import { type CreateChatCompletionResponse } from 'openai'
+import { type ConsumableMessage, type JsonLike, type Message, type Role, streamNewlineSplitter, streamTextDecoder, toConsumable, message as vMessage, zRole } from 'vellma'
+import { type Peripherals, useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
-import { type ApiChatConfig, type ApiChatMessage, type ApiChatRole, chat as chatApi } from '../api'
+import { type ApiChatMessage, type ApiChatModel, type ApiChatRole, type ApiConfig, type ApiResponse, apiClient } from '../api'
+
+export type ApiChatConfig = ApiConfig & {
+  messages: ApiChatMessage[],
+  function_call?: 'auto' | 'none' | { name: string },
+  functions?: JsonLike[],
+  model?: ApiChatModel,
+}
+export type ApiChatResponse = ApiResponse<CreateChatCompletionResponse>
+export type ApiChatResponseData = CreateChatCompletionResponse
+
+export type DataChunk = {
+  id: string,
+  object: string,
+  created: number,
+  model: string,
+  choices: Array<{
+    delta: DataChunkDelta,
+    finish_reason?: string,
+    index: number,
+  }>,
+}
+
+export type DataChunkDelta = {
+  content?: string,
+  function_call?: {
+    name?: string,
+    arguments?: string,
+  },
+  role?: ApiChatRole,
+}
 
 export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & {
   messages: Message[],
@@ -9,7 +40,7 @@ export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & 
   tools: Tool[],
 }
 
-const toExternalMessage = (message: Message): ApiChatMessage => {
+const toMessage = (message: Message): ApiChatMessage => {
   return {
     content: message.text,
     function_call: message.function
@@ -28,34 +59,6 @@ const toExternalRole = (role: Role): ApiChatRole => {
   if (role === zRole.enum.function) return 'function'
   if (role === zRole.enum.human) return 'user'
   if (role === zRole.enum.system) return 'system'
-
-  throw new Error(`[openai][chat] invalid role: ${role}`)
-}
-
-const toInternalFunction = (function_call: ApiChatMessage['function_call']) => {
-  const args = function_call?.arguments
-  const name = function_call?.name
-
-  return {
-    args,
-    name,
-  }
-}
-
-const toInternalMessage = (message: ApiChatMessage): Message => {
-  return toMessage({
-    function: message.function_call ? toInternalFunction(message.function_call) : undefined,
-    name: message.name,
-    role: toInternalRole(message.role),
-    text: message.content || '',
-  })
-}
-
-const toInternalRole = (role: ApiChatRole): Role => {
-  if (role === 'assistant') return zRole.enum.assistant
-  if (role === 'function') return zRole.enum.function
-  if (role === 'user') return zRole.enum.human
-  if (role === 'system') return zRole.enum.system
 
   throw new Error(`[openai][chat] invalid role: ${role}`)
 }
@@ -89,21 +92,95 @@ const toolsToFunctions = (tools: Tool[]): JsonLike[] => {
   return functions
 }
 
-export const chat = async ({ toolToUse, tools, ...config }: AdapterChatConfig) => {
-  const { logger = useLogger() } = config.peripherals || {}
+const streamDataParser = ({ logger = useLogger() }: Partial<Peripherals> = {}) => {
+  const dataChunkPrefix = 'data: '
+  const dataChunkDoneValue = '[DONE]'
 
-  const messages = config.messages.map(toExternalMessage)
+  return new TransformStream<string | undefined, DataChunk>({
+    async transform(textChunk, controller) {
+      if (textChunk?.startsWith(dataChunkPrefix)) {
+        const maybeJson = textChunk.slice(dataChunkPrefix.length)
+
+        try {
+          const dataChunk = JSON.parse(maybeJson)
+
+          controller.enqueue(dataChunk)
+        } catch (error) {
+          if (maybeJson !== dataChunkDoneValue) {
+            await logger.error(`[integrations][openai][chat] error:\n${String(error)}`)
+          }
+        }
+      }
+    },
+  })
+}
+
+const streamDataDeltaExtractor = () => {
+  return new TransformStream<DataChunk | undefined, DataChunkDelta>({
+    async transform(dataChunk, controller) {
+      if (dataChunk?.choices[0].delta) {
+        const dataDelta = dataChunk.choices[0].delta
+
+        controller.enqueue(dataDelta)
+      }
+    },
+  })
+}
+
+const streamMessageHydrator = (message: Message) => {
+  return new TransformStream<DataChunkDelta | undefined, Message>({
+    async transform(dataDelta, controller) {
+      if (dataDelta) {
+        if (dataDelta.content) {
+          message.text += dataDelta.content
+
+          controller.enqueue({
+            ...message,
+            textDelta: dataDelta.content,
+          })
+        }
+
+        if (dataDelta.function_call) {
+          if (dataDelta.function_call?.name) {
+            message.function = {
+              name: dataDelta.function_call.name,
+              args: '',
+            }
+          }
+
+          if (message.function && dataDelta.function_call?.arguments) {
+            message.function.args += dataDelta.function_call.arguments
+          }
+
+          controller.enqueue({
+            ...message,
+          })
+        }
+      }
+    },
+  })
+}
+
+export const chat = async ({ toolToUse, tools, ...config }: AdapterChatConfig): Promise<ConsumableMessage> => {
+  const { model = 'gpt-4', peripherals = {} } = config
+  const messages = config.messages.map(toMessage)
   const function_call = toolToUse ? { name: toolToUse } : undefined
   const functions = tools?.length ? toolsToFunctions(tools) : undefined
-  const { json } = await chatApi({ ...config, function_call, functions, messages })
 
-  await logger.debug(`[integrations][openai][chat] response:\n${JSON.stringify(json, null, 2)}`)
+  const api = apiClient(config)
+  const response = await api.post('/v1/chat/completions', { body: { function_call, functions, messages, model, stream: true } }) as ApiChatResponse
 
-  try {
-    const { message: newExternalMessage } = json.choices[0]
-
-    return toInternalMessage(newExternalMessage!)
-  } catch (error) {
-    throw new Error(`[integrations][openai][chat] invalid response: ${error}`)
+  if (!response.body) {
+    throw new Error(`[integrations][openai][chat] missing response body`)
   }
+
+  const message = vMessage({ role: 'assistant' })
+  const stream = (response.body as ReadableStream<Uint8Array>)
+    .pipeThrough(streamTextDecoder(peripherals))
+    .pipeThrough(streamNewlineSplitter(peripherals))
+    .pipeThrough(streamDataParser(peripherals))
+    .pipeThrough(streamDataDeltaExtractor())
+    .pipeThrough(streamMessageHydrator(message))
+
+  return toConsumable(message, { stream })
 }

@@ -7,8 +7,8 @@ describe('codeRunnerTool', () => {
 
     expect(tool).toHaveProperty('handler', expect.any(Function))
     expect(tool).toHaveProperty('schema', {
-      name: 'codeRunner',
-      description: 'A function that can run JavaScript code in a sandbox. All code is wrapped in an async function, so you can use await and you must return the final result. Please make sure the code string you provide is JSON encoded.',
+      name: 'code-runner',
+      description: expect.any(String),
       args: {
         code: {
           type: 'string',

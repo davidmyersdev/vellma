@@ -20,6 +20,7 @@ export const zMessage = z.object({
   name: z.string().optional(),
   role: zRole,
   text: z.string().optional().default(''),
+  textDelta: z.string().optional().default(''),
   userId: z.string().optional(),
 })
 

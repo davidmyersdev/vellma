@@ -1,11 +1,8 @@
 import { type Message, id as makeId, messageFactory } from 'vellma'
+import { type ChatIntegration } from 'vellma/integrations'
 import { type Peripherals, useLogger, useStorage } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
 import { type Model } from '..'
-
-export type ChatIntegration = {
-  chat: (messages: Message[], metadata?: any) => Promise<Message>,
-}
 
 export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 
@@ -26,6 +23,19 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     await storage.set(id, [...await get(id), message])
   }
 
+  const set = async (message: Message) => {
+    const messages = await get(id)
+    const foundIndex = messages.findIndex(m => m.id === message.id)
+
+    if (foundIndex >= 0) {
+      const updated = messages.map((item, index) => index === foundIndex ? message : item)
+
+      return await storage.set(id, updated)
+    }
+
+    await storage.set(id, [...await get(id), message])
+  }
+
   const getFnResult = async (tool: Tool, toolArgsJson: string) => {
     try {
       const args = JSON.parse(toolArgsJson)
@@ -40,42 +50,51 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     }
   }
 
-  const handleTools = async (fnCall: NonNullable<Message['function']>): Promise<Message> => {
+  const handleTools = async function* (fnCall: NonNullable<Message['function']>) {
     const tool = tools.find(t => t.schema.name === fnCall.name)
 
     if (!tool) {
       throw new Error('[models][chat] no tool found for fn call')
     }
 
-    const args = fnCall.args as any
+    const args = fnCall.args as string
     const functionResult = await getFnResult(tool, args)
     const functionMessage = messageFactory.function({ name: tool.schema.name, text: JSON.stringify(functionResult, null, 2) })
 
-    return await generate(functionMessage)
+    yield* generate(functionMessage)
   }
 
-  const attemptGenerate = async (messages: Message[]) => {
+  const attemptGenerate = async function* (messages: Message[]) {
     const reply = await integration.chat(messages, { model, peripherals, toolToUse, tools })
 
-    await add(reply)
+    for await (const chunk of reply) {
+      await set(chunk)
 
-    if (reply.function) return await handleTools(reply.function)
+      if (chunk.function) {
+        // Todo: Yield a status update message.
+        const fullMessage = await reply.get()
 
-    return reply
+        if (fullMessage.function) {
+          yield* handleTools(fullMessage.function)
+        }
+      }
+
+      yield chunk
+    }
   }
 
   const clear = async () => {
     await storage.remove(id)
   }
 
-  const generate = async (...messages: Message[]) => {
+  const generate = async function* (...messages: Message[]): AsyncGenerator<Message> {
     const allMessages = [...await get(id), ...messages]
 
     await hydrate(allMessages)
 
     // Initial attempt.
     try {
-      return await attemptGenerate(allMessages)
+      return yield* attemptGenerate(allMessages)
     } catch (error) {
       await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }
@@ -84,7 +103,7 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     for (let i = 0; i < retries; i++) try {
       await logger.debug(`[models][chat] Reattempting to generate message... (${i + 1}/${retries})`)
 
-      return await attemptGenerate(allMessages)
+      return yield* attemptGenerate(allMessages)
     } catch (error) {
       await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }

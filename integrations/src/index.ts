@@ -1,7 +1,12 @@
-import { type ChatIntegration, type CompletionIntegration, type EmbeddingIntegration } from 'vellma/models'
+import { type ConsumableMessage, type Message } from 'vellma'
+import { type CompletionIntegration, type EmbeddingIntegration } from 'vellma/models'
 import { openai } from './openai'
 
 export type Integration = ChatIntegration & CompletionIntegration & EmbeddingIntegration
+
+export type ChatIntegration = {
+  chat: (messages: Message[], metadata?: any) => Promise<ConsumableMessage>,
+}
 
 export const withDefaults = (integration: Partial<Integration>): Integration => {
   return {
