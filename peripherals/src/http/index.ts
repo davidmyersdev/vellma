@@ -1,12 +1,12 @@
-import { fetchAdapter } from './adapters/fetch'
+import { fetchHttp } from './adapters/fetch-http'
 
 export type HttpAdapter = {
-  fetch: (input: RequestInfo | URL, init?: RequestInit | undefined) => Promise<Response>,
+  fetch: typeof fetch,
 }
 
 export type HttpPeripheral = ReturnType<typeof useHttp>
 
-export const useHttp = (adapter: HttpAdapter = fetchAdapter()) => {
+export const useHttp = (adapter: HttpAdapter = fetchHttp()) => {
   return {
     fetch: adapter.fetch,
   }
