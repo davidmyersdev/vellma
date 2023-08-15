@@ -1,18 +1,21 @@
-import readline from 'node:readline'
 import debounce from 'lodash/debounce'
 import { type IoAdapter } from '..'
 
-/**
- * Prompt a user for input.
- *
- * @param question The prompt to indicate to the user that input is expected. Defaults to `> `.
- * @param options.input The readable stream to read input from. Defaults to `process.stdin`.
- * @param options.output The writable stream to write output to. Defaults to `process.stdout`.
- * @returns The user input.
- */
-export const terminalIo = ({ input = process.stdin, output = process.stdout }: { input?: NodeJS.ReadableStream, output?: NodeJS.WritableStream } = {}): IoAdapter => {
+export const terminalIo = (): IoAdapter => {
+  const getIo = async () => {
+    const { default: process } = await import('node:process')
+
+    return {
+      input: process.stdin,
+      output: process.stdout,
+    }
+  }
+
   return {
     read: async () => {
+      const { default: readline } = await import('node:readline')
+      const { input, output } = await getIo()
+
       return new Promise((resolve) => {
         const lines = <string[]>[]
         const rl = readline.createInterface({ input, output, prompt: '' })
@@ -42,6 +45,8 @@ export const terminalIo = ({ input = process.stdin, output = process.stdout }: {
       })
     },
     write: async (text: string) => {
+      const { output } = await getIo()
+
       output.write(text)
     },
   }
