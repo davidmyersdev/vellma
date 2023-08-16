@@ -1,6 +1,6 @@
 import { type LoggerAdapter } from '..'
 
-export const fileLogger = (path: string): LoggerAdapter => {
+export const fileLogger = (path = `./tmp/logger-${Date.now()}.log`): LoggerAdapter => {
   const writeLine = async (text: string) => {
     const { appendFileSync } = await import('node:fs')
 

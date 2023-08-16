@@ -1,5 +1,5 @@
 import { type JsonLike } from 'vellma'
-import { consoleLogger, nullLogger, terminalLogger } from './adapters'
+import { consoleLogger, fileLogger, nullLogger } from './adapters'
 
 export * from './adapters'
 
@@ -14,7 +14,7 @@ export type LoggerPeripheral = LoggerAdapter
 
 const defaultAdapter = (): LoggerAdapter => {
   if (typeof process !== 'undefined') {
-    return terminalLogger()
+    return fileLogger()
   }
 
   if (typeof console !== 'undefined') {
