@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
 import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
@@ -30,7 +31,7 @@ const initialHumanMessage = factory.human({ text: initialHumanPrompt })
 
 await io.write(`${labelHuman}\n${initialHumanMessage.text}\n\n`)
 
-const initialReply = await model.generate(systemMessage, initialHumanMessage)
+const initialReply = await toValue(model.generate(systemMessage, initialHumanMessage))
 
 await io.write(`${labelAssistant}\n${initialReply.text}\n\n`)
 
@@ -41,7 +42,7 @@ while (true) {
   await io.write(`\n`)
 
   const humanMessage = factory.human({ text: humanAnswer })
-  const assistantMessage = await model.generate(humanMessage)
+  const assistantMessage = await toValue(model.generate(humanMessage))
 
   await io.write(`${labelAssistant}\n${assistantMessage.text}\n\n`)
 }

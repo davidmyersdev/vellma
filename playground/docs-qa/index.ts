@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
-import { type Vector } from 'vellma'
+import { type Vector, toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat, useEmbedding } from 'vellma/models'
 import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
@@ -55,7 +55,7 @@ while (true) {
   const { factory: chatFactory, model: chatModel } = useChat({ integration, peripherals })
   const systemPrompt = chatFactory.system({ text: `You are an assistant that answers questions about the following information:\n\n${relevantText}` })
   const humanQuestion = chatFactory.human({ text: question })
-  const answer = await chatModel.generate(systemPrompt, humanQuestion)
+  const answer = await toValue(chatModel.generate(systemPrompt, humanQuestion))
 
   await io.write(`\n${chalk.cyan('Answer:')}\n${answer.text}\n\n`)
 }

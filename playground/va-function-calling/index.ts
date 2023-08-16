@@ -21,7 +21,13 @@ const systemPrompt = `You are a virtual assistant that helps keep track of vario
 const systemMessage = factory.system({ text: systemPrompt })
 const welcomeMessage = await model.generate(systemMessage)
 
-await io.write(`${labelAssistant}\n${welcomeMessage.text}\n\n`)
+await io.write(`${labelAssistant}\n`)
+
+for await (const { textDelta } of welcomeMessage) {
+  await io.write(textDelta)
+}
+
+await io.write(`\n\n`)
 
 // Chat loop
 while (true) {
@@ -32,5 +38,11 @@ while (true) {
   const humanMessage = factory.human({ text: humanAnswer })
   const assistantMessage = await model.generate(humanMessage)
 
-  await io.write(`\n${labelAssistant}\n${assistantMessage.text}\n\n`)
+  await io.write(`${labelAssistant}\n`)
+
+  for await (const { textDelta } of assistantMessage) {
+    await io.write(textDelta)
+  }
+
+  await io.write(`\n\n`)
 }

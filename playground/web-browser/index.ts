@@ -1,4 +1,5 @@
 import chalk from 'chalk'
+import { toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
 import { terminalIo, terminalLogger, useIo, useLogger } from 'vellma/peripherals'
@@ -23,7 +24,7 @@ while (true) {
   await io.write(`\n`)
 
   const humanMessage = factory.human({ text: humanAnswer })
-  const assistantMessage = await model.generate(humanMessage)
+  const assistantMessage = await toValue(model.generate(humanMessage))
 
   await io.write(`${labelAssistant}\n${assistantMessage.text}\n\n`)
 }
