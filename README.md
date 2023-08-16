@@ -37,6 +37,7 @@ yarn add vellma
 Let's use the `openai` integration to create a chat model that uses the terminal for IO (input and output).
 
 ```ts
+// ./playground/simple-chat/index.ts
 import chalk from 'chalk'
 import { toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
@@ -47,7 +48,7 @@ import { terminalIo, useIo } from 'vellma/peripherals'
 const labelAssistant = chalk.cyan('Assistant:')
 const labelHuman = chalk.green('You:')
 
-// Initialization
+// Vellma initialization
 const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
 const { factory, model } = useChat({ integration })
 const io = useIo(terminalIo())
@@ -65,7 +66,7 @@ while (true) {
 }
 ```
 
-This example will result in a terminal chat loop that looks something like...
+Running the code above will result in a terminal chat loop that looks something like this.
 
 ![A screenshot of a terminal-based conversation between an AI language model and a human](./terminal-chat.png)
 
