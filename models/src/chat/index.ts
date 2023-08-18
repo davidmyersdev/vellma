@@ -19,8 +19,8 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
   const id = makeId()
   const { logger = useLogger(), storage = useStorage() } = peripherals
 
-  const add = async (message: Message) => {
-    await storage.set(id, [...await get(id), message])
+  const add = async (...messages: Message[]) => {
+    await storage.set(id, [...await get(id), ...messages])
   }
 
   const set = async (message: Message) => {
@@ -36,6 +36,8 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     await storage.set(id, [...await get(id), message])
   }
 
+  // Todo: Make function behavior configurable. Users should have the ability to control whether a function retries or
+  // not, how many times it retries, and whether or not special handling should be incorporated for the response.
   const getFnResult = async (tool: Tool, toolArgsJson: string) => {
     try {
       const args = JSON.parse(toolArgsJson)
@@ -61,10 +63,13 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     const functionResult = await getFnResult(tool, args)
     const functionMessage = messageFactory.function({ name: tool.schema.name, text: JSON.stringify(functionResult, null, 2) })
 
-    yield* generate(functionMessage)
+    await add(functionMessage)
+
+    yield* attemptGenerate()
   }
 
-  const attemptGenerate = async function* (messages: Message[]) {
+  const attemptGenerate = async function* (): AsyncGenerator<Message> {
+    const messages = await get(id)
     const reply = await integration.chat(messages, { model, peripherals, toolToUse, tools })
 
     for await (const chunk of reply) {
@@ -87,14 +92,12 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     await storage.remove(id)
   }
 
-  const generate = async function* (...messages: Message[]): AsyncGenerator<Message> {
-    const allMessages = [...await get(id), ...messages]
-
-    await hydrate(allMessages)
+  const generate = async function* (...messages: Message[]) {
+    await add(...messages)
 
     // Initial attempt.
     try {
-      return yield* attemptGenerate(allMessages)
+      return yield* attemptGenerate()
     } catch (error) {
       await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }
@@ -103,7 +106,7 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     for (let i = 0; i < retries; i++) try {
       await logger.debug(`[models][chat] Reattempting to generate message... (${i + 1}/${retries})`)
 
-      return yield* attemptGenerate(allMessages)
+      return yield* attemptGenerate()
     } catch (error) {
       await logger.error(`[models][chat] An error occurred: ${String(error)}`)
     }
