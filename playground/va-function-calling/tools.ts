@@ -1,11 +1,11 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { id } from 'vellma'
-import { fileStorage, useStorage } from 'vellma/peripherals'
+import { jsonFileStorage, useStorage } from 'vellma/peripherals'
 import { tool } from 'vellma/tools'
 
 const thisDir = dirname(fileURLToPath(import.meta.url))
-const db = useStorage(fileStorage(join(thisDir, 'events.json')))
+const db = useStorage(jsonFileStorage(join(thisDir, 'events.json')))
 
 export const tools = [
   tool({

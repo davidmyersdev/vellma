@@ -1,2 +1,2 @@
-export * from './file'
-export * from './in-memory'
+export * from './in-memory-storage'
+export * from './json-file-storage'

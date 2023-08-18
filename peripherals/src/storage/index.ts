@@ -1,4 +1,4 @@
-import { inMemoryStorage } from './adapters/in-memory'
+import { inMemoryStorage } from './adapters/in-memory-storage'
 
 export * from './adapters'
 

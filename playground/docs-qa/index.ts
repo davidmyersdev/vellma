@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import { type Vector, toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat, useEmbedding } from 'vellma/models'
-import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
+import { jsonFileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { similarity } from 'ml-distance'
 
@@ -14,7 +14,7 @@ const root = dirname(fileURLToPath(import.meta.url))
 // Peripheral configuration
 const dbFile = resolve(join('tmp', 'playground-embedding-qa.json'))
 const io = useIo(terminalIo())
-const storage = useStorage(fileStorage(dbFile))
+const storage = useStorage(jsonFileStorage(dbFile))
 const peripherals = { io, storage }
 
 // Vellma initialization

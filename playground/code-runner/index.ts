@@ -2,12 +2,12 @@ import chalk from 'chalk'
 import { toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
-import { fileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
+import { jsonFileStorage, terminalIo, useIo, useStorage } from 'vellma/peripherals'
 import { codeRunnerTool, valTownCodeRunner } from 'vellma/tools'
 
 // Config
 const io = useIo(terminalIo())
-const storage = useStorage(fileStorage('./tmp/code-runner.json'))
+const storage = useStorage(jsonFileStorage('./tmp/code-runner.json'))
 const peripherals = { storage }
 
 // Vellma initialization
