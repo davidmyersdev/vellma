@@ -12,6 +12,7 @@ export default defineConfig({
       fileName: 'index',
       formats: ['cjs', 'es'],
     },
+    sourcemap: true,
   },
   plugins: [
     externalizeDeps({

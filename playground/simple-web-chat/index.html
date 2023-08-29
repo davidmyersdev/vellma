@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Web Chat</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <script type="module">
+    import { openai } from 'vellma/integrations'
+    import { useChat } from 'vellma/models'
+
+    // Output helpers
+    const labelAssistant = 'Assistant:'
+    const labelHuman = 'You:'
+
+    // Vellma initialization
+    const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
+    const { factory, model } = useChat({ integration })
+
+    const humanMessage = factory.human({ text: 'Hi there!' })
+
+    // eslint-disable-next-line no-console
+    console.log(`${labelHuman} ${humanMessage.text}`)
+
+    const assistantMessage = model.generate(humanMessage)
+
+    for await (const { textDelta } of assistantMessage) {
+      // eslint-disable-next-line no-console
+      console.log(`${labelAssistant} ${textDelta}`)
+    }
+  </script>
+</body>
+</html>

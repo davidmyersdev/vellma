@@ -11,7 +11,8 @@ export type SystemMessage = z.infer<typeof zSystemMessage>
 
 export const zMessage = z.object({
   id: zId.default(() => id()),
-  createdAt: zTimestamp.default(() => timestamp()),
+  chatId: zId.optional(),
+  userId: z.string().optional(),
   function: z.object({
     args: zJsonLike.or(z.string()),
     // Todo: Maybe enum the function list?
@@ -21,7 +22,8 @@ export const zMessage = z.object({
   role: zRole,
   text: z.string().optional().default(''),
   textDelta: z.string().optional().default(''),
-  userId: z.string().optional(),
+  createdAt: zTimestamp.default(() => timestamp()),
+  updatedAt: zTimestamp.default(() => timestamp()),
 })
 
 export const zAssistantMessage = zMessage.extend({

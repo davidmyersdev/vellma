@@ -1,32 +1,56 @@
-import { inMemoryStorage } from './adapters/in-memory-storage'
+import { type Identity } from 'vellma'
+import { type z } from 'zod'
+import { inMemoryStorage } from './adapters'
 
 export * from './adapters'
 
 export type StorageAdapter = {
-  each: <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<void | { break: true }>) => Promise<void>,
-  get: <Key = unknown, Data = unknown>(key: Key) => Promise<Data>,
-  remove: <Key = unknown>(key: Key) => Promise<void>,
-  set: <Key = unknown, Data = unknown>(key: Key, data: Data) => Promise<void>,
+  // Todo: Make it possible to build storage adapters (or buckets) from a schema.
+  // This will handle the scenario where we need to be able to define custom buckets outside of the context
+  // of Vellma.
+  bucket: <T extends StorageBucketAttributes>(schema: StorageBucketSchema<T>) => Promise<StorageBucketAdapter>,
 }
 
-export type StoragePeripheral = Omit<StorageAdapter, 'get'> & {
-  all: <Data = unknown>() => Promise<Data[]>,
-  filter: <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<boolean>) => Promise<Data[]>,
-  find: <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<boolean>) => Promise<Data | undefined>,
-  get: {
-    <Key = unknown, Data = unknown>(key: Key, fallback: Data): Promise<Data>,
-    <Key = unknown, Data = unknown>(key: Key): Promise<Data | undefined>,
-  },
+/**
+ * An interface for interacting with a bucket of data.
+ */
+export type StorageBucketAdapter<T extends StorageBucketAttributes = StorageBucketAttributes> = {
+  /**
+   * Returns all objects in the bucket.
+   */
+  all: () => Promise<StorageBucketOutput<T>[]>,
+  /**
+   * Destroys all objects in the bucket that match the given attributes.
+   */
+  destroy: (attributes: Partial<StorageBucketInput<T>>) => Promise<void>,
+  /**
+   * Returns the first object in the bucket that matches the given attributes.
+   */
+  find: (attributes: Partial<StorageBucketInput<T>>) => Promise<StorageBucketOutput<T> | undefined>,
+  /**
+   * Creates or updates an object in the bucket that matches the given id.
+   */
+  save: (attributes: StorageBucketInput<T> & { id: string }) => Promise<void>,
+  /**
+   * Returns all objects in the bucket that match the given attributes.
+   */
+  where: (attributes: Partial<StorageBucketInput<T>>) => Promise<StorageBucketOutput<T>[]>,
 }
 
-export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter => {
-  return {
-    each: async () => { throw new Error('[storage] not implemented') },
-    get: async () => { throw new Error('[storage] not implemented') },
-    remove: async () => { throw new Error('[storage] not implemented') },
-    set: async () => { throw new Error('[storage] not implemented') },
-    ...adapter,
-  }
+export type StorageBucketAttributes = z.ZodObject<{ id: z.ZodString | z.ZodDefault<z.ZodString> }>
+export type StorageBucketInput<T extends StorageBucketAttributes = StorageBucketAttributes> = Identity<z.input<T>>
+export type StorageBucketOutput<T extends StorageBucketAttributes = StorageBucketAttributes> = Identity<z.infer<T>>
+export type StorageBucketSchema<T extends StorageBucketAttributes = StorageBucketAttributes> = {
+  name: string,
+  attributes: T,
+}
+
+export type StoragePeripheral = {
+  bucket: <T extends StorageBucketAttributes>(schema: StorageBucketSchema<T>) => Promise<StorageBucketAdapter<T>>,
+}
+
+export const storageBucket = <T extends StorageBucketAttributes>(schema: StorageBucketSchema<T>) => {
+  return schema
 }
 
 /**
@@ -35,68 +59,10 @@ export const withDefaults = (adapter: Partial<StorageAdapter>): StorageAdapter =
  * @param adapter The adapter to use for storing data. Defaults to `inMemoryStorage()`.
  * @returns A StoragePeripheral object.
  */
-export const useStorage = (adapter: StorageAdapter = inMemoryStorage()): StoragePeripheral => {
-  return {
-    ...adapter,
-    /**
-     * Return all entries.
-     *
-     * @returns An array of all entries.
-     */
-    all: async <Key = unknown, Data = unknown>() => {
-      const results: Data[] = []
+export const useStorage = (adapter: StorageAdapter): StoragePeripheral => {
+  return adapter as StoragePeripheral
+}
 
-      await adapter.each<Key, Data>(async (_key, data) => {
-        results.push(data)
-      })
-
-      return results
-    },
-    /**
-     * Enumerate all entries and return those that match.
-     *
-     * @param callback The callback to assert whether the entry is a match.
-     * @returns An array of matching entries.
-     */
-    filter: async <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<boolean>) => {
-      const results: Data[] = []
-
-      adapter.each<Key, Data>(async (key, data) => {
-        if (await callback(key, data)) {
-          results.push(data)
-        }
-      })
-
-      return results
-    },
-    /**
-     * Find the first entry that matches, stop enumerating, and return it.
-     *
-     * @param callback The callback to assert whether the entry is a match.
-     * @returns The matching entry.
-     */
-    find: async <Key = unknown, Data = unknown>(callback: (key: Key, data: Data) => Promise<boolean>) => {
-      let result: any
-
-      adapter.each<Key, Data>(async (key, data) => {
-        const isMatch = await callback(key, data)
-
-        if (isMatch) {
-          result = data
-
-          return { break: true }
-        }
-      })
-
-      return result
-    },
-    /**
-     * @param key A key to use for retrieving data.
-     * @param fallback An optional fallback value to return if the key does not exist.
-     * @returns The data stored at the key, or the fallback value if the key does not exist.
-     */
-    get: async (key: any, fallback?: any) => {
-      return await adapter.get(key) ?? fallback
-    },
-  }
+export const useInMemoryStorage = (): StoragePeripheral => {
+  return useStorage(inMemoryStorage())
 }
