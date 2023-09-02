@@ -4,7 +4,7 @@ import { zJsonLike } from './json'
 import { zRole } from './role'
 import { timestamp, zTimestamp } from './timestamp'
 
-export type Message = z.infer<typeof zMessage>
+export type ChatMessage = z.infer<typeof zMessage>
 export type AssistantMessage = z.infer<typeof zAssistantMessage>
 export type HumanMessage = z.infer<typeof zHumanMessage>
 export type SystemMessage = z.infer<typeof zSystemMessage>
@@ -52,21 +52,21 @@ export const zSystemMessage = zMessage.extend({
   role: z.literal(zRole.enum.system).default(zRole.enum.system),
 })
 
-export const message = (thing: unknown): Message => {
+export const message = (thing: unknown): ChatMessage => {
   return zMessage.parse(thing)
 }
 
 export const messageFactory = {
-  assistant: (thing: unknown): Message => {
+  assistant: (thing: unknown): ChatMessage => {
     return zAssistantMessage.parse(thing)
   },
-  function: (thing: unknown): Message => {
+  function: (thing: unknown): ChatMessage => {
     return zFunctionMessage.parse(thing)
   },
-  human: (thing: unknown): Message => {
+  human: (thing: unknown): ChatMessage => {
     return zHumanMessage.parse(thing)
   },
-  system: (thing: unknown): Message => {
+  system: (thing: unknown): ChatMessage => {
     return zSystemMessage.parse(thing)
   },
 }

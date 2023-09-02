@@ -1,4 +1,4 @@
-import { type Message, chainable, id, messageFactory, timestamp, zId, zJsonLike, zRole, zTimestamp } from 'vellma'
+import { type ChatMessage, chainable, id, messageFactory, timestamp, zId, zJsonLike, zRole, zTimestamp } from 'vellma'
 import { type ChatIntegration } from 'vellma/integrations'
 import { type Peripherals, storageBucket, useInMemoryStorage, useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
@@ -59,13 +59,13 @@ export const useChat = (config: ChatModelConfig) => {
   }))
 
   // Todo: Rename to something more suitable such as `merge`, `sync`, or `hydrate`.
-  const add = async (...messages: Message[]) => {
+  const add = async (...messages: ChatMessage[]) => {
     for (const message of messages) {
       await chatMessages.save({ ...message, chatId, updatedAt: timestamp() })
     }
   }
 
-  const attemptGenerate = async function* (): AsyncGenerator<Message> {
+  const attemptGenerate = async function* (): AsyncGenerator<ChatMessage> {
     const messages = await chatMessages.where({ chatId })
     const orderedMessages = messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
     const reply = await integration.chat(orderedMessages, { model, peripherals, toolToUse, tools })
@@ -86,7 +86,7 @@ export const useChat = (config: ChatModelConfig) => {
     }
   }
 
-  const generate = async function* (...messages: Message[]) {
+  const generate = async function* (...messages: ChatMessage[]) {
     await add(...messages)
 
     const errors = [] as any[]
@@ -136,7 +136,7 @@ export const useChat = (config: ChatModelConfig) => {
     }
   }
 
-  const handleTools = async function* (fnCall: NonNullable<Message['function']>) {
+  const handleTools = async function* (fnCall: NonNullable<ChatMessage['function']>) {
     const tool = tools.find(t => t.schema.name === fnCall.name)
 
     if (!tool) {

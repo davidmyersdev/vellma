@@ -1,5 +1,5 @@
 import { type CreateChatCompletionResponse } from 'openai'
-import { type ConsumableMessage, type JsonLike, type Message, type Role, streamNewlineSplitter, streamTextDecoder, toConsumable, message as vMessage, zRole } from 'vellma'
+import { type ChatMessage, type Consumable, type JsonLike, type Role, streamNewlineSplitter, streamTextDecoder, toConsumable, message as vMessage, zRole } from 'vellma'
 import { type Peripherals, useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
 import { type ApiChatMessage, type ApiChatModel, type ApiChatRole, type ApiConfig, type ApiResponse, apiClient } from '../api'
@@ -35,12 +35,12 @@ export type DataChunkDelta = {
 }
 
 export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & {
-  messages: Message[],
+  messages: ChatMessage[],
   toolToUse?: string,
   tools: Tool[],
 }
 
-const toMessage = (message: Message): ApiChatMessage => {
+const toMessage = (message: ChatMessage): ApiChatMessage => {
   return {
     content: message.text,
     function_call: message.function
@@ -127,8 +127,8 @@ const streamDataDeltaExtractor = () => {
   })
 }
 
-const streamMessageHydrator = (message: Message) => {
-  return new TransformStream<DataChunkDelta | undefined, Message>({
+const streamMessageHydrator = (message: ChatMessage) => {
+  return new TransformStream<DataChunkDelta | undefined, ChatMessage>({
     async transform(dataDelta, controller) {
       if (dataDelta) {
         if (dataDelta.content) {
@@ -161,7 +161,7 @@ const streamMessageHydrator = (message: Message) => {
   })
 }
 
-export const chat = async ({ toolToUse, tools, ...config }: AdapterChatConfig): Promise<ConsumableMessage> => {
+export const chat = async ({ toolToUse, tools, ...config }: AdapterChatConfig): Promise<Consumable<ChatMessage>> => {
   const { model = 'gpt-4', peripherals = {} } = config
   const messages = config.messages.map(toMessage)
   const function_call = toolToUse ? { name: toolToUse } : undefined

@@ -1,6 +1,5 @@
 import merge from 'lodash/merge'
 import { type Peripherals } from 'vellma/peripherals'
-import { type Message } from '#data'
 
 export * from '#data'
 
@@ -17,7 +16,6 @@ export type Consumable<T, Chunk = T> = T & {
   get: () => Promise<T>,
 }
 
-export type ConsumableMessage = Consumable<Message>
 export type ConsumableSource<T> = { generator: AsyncGenerator<T> | (() => AsyncGenerator<T>), stream?: undefined } | { generator?: undefined, stream: ReadableStream<T> }
 export type ConsumableUnknownSource<T> = Awaitable<AsyncGenerator<T> | (() => AsyncGenerator<T>) | ReadableStream<T> | (() => ReadableStream<T>)>
 export type Chainable<T> = T extends PromiseLike<infer U> ? U : T
