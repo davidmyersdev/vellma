@@ -34,41 +34,49 @@ yarn add vellma
 
 ### Example: Terminal chat
 
-Let's use the `openai` integration to create a chat model that uses the terminal for IO (input and output).
+Let's use the `openai` integration to create a chat model that uses the terminal for user input and output.
 
 ```ts
-// ./playground/simple-chat/index.ts
-import chalk from 'chalk'
-import { toValue } from 'vellma'
 import { openai } from 'vellma/integrations'
 import { useChat } from 'vellma/models'
 import { terminalIo, useIo } from 'vellma/peripherals'
 
-// Output helpers
-const labelAssistant = chalk.cyan('Assistant:')
-const labelHuman = chalk.green('You:')
-
-// Vellma initialization
-const integration = openai({ apiKey: import.meta.env.VITE_OPENAI_API_KEY })
+// Initialize the integration, model, and peripherals.
+const integration = openai({ apiKey: 'your-api-key' })
 const { factory, model } = useChat({ integration })
 const io = useIo(terminalIo())
 
 // Chat loop
 while (true) {
-  const humanAnswer = await io.prompt(`${labelHuman}\n`)
+  // On each iteration, you will be prompted for input.
+  const yourInput = await io.prompt(`You:\n`)
+  const yourMessage = factory.human({ text: yourInput })
 
+  // Then, a response will be generated.
+  const theirReply = model.generate(yourMessage)
+
+  await io.write(`Assistant:\n`)
+
+  // The response will be written to the terminal in real-time.
+  for await (const { textDelta } of theirReply) {
+    await io.write(textDelta)
+  }
+
+  // Write a final newline to the terminal to prepare for the next iteration.
   await io.write(`\n`)
-
-  const humanMessage = factory.human({ text: humanAnswer })
-  const assistantMessage = await toValue(model.generate(humanMessage))
-
-  await io.write(`${labelAssistant}\n${assistantMessage.text}\n\n`)
 }
 ```
 
-Running the code above will result in a terminal chat loop that looks something like this.
+Running the code above will allow you to have a basic conversation that looks something like this.
 
-![A screenshot of a terminal-based conversation between an AI language model and a human](./terminal-chat.png)
+```
+You:
+Explain human existence in 1 sentence.
+Assistant:
+Human existence is the intricate dance of biological life, consciousness, relationships, growth, emotions, knowledge, and experience on a small planet in a vast universe.
+You:
+<Your next prompt here>
+```
 
 For more examples, check out the [`playground`](./playground) directory.
 
@@ -80,20 +88,20 @@ To get the best out of `vellma`, there are some concepts that you should underst
 
 In order to keep this library flexible, while also maintaining reasonable defaults, features that relate to _external_ runtime functionality should be implemented with the adapter pattern. In this library, the adapter pattern consists of 2 main concepts: the **interface** and the **adapter**. The interface refers to the _internal_ interface that we will use throughout the codebase. The adapter maps that _internal_ interface to the _external_ interface that a given implementation provides. Some examples of this are:
 
-- Mapping the `openai` endpoint for chat completions to the `ChatIntegration` interface used by chat models.
+- Mapping the `openai` endpoint for chat completions to the `ChatIntegration` interface used by the Chat model.
 - Mapping the `node:readline` terminal IO utilities to the `IoPeripheral` interface used by features that deal with user input and output.
 
 #### Example: Mapping `api.openai.com/v1/chat/completions` to `ChatIntegration`
 
-Take a look at the following interface for [`ChatIntegration`](./models/src/chat/index.ts#5).
+Take a look at the following interface for [`ChatIntegration`](./integrations/src/index.ts#7).
 
 ```ts
 export type ChatIntegration = {
-  chat: (messages: ChatMessage[]) => Promise<ChatMessage>,
+  chat: (messages: ChatMessage[]) => Promise<Consumable<ChatMessage>>,
 }
 ```
 
-The interface is meant to be simple for the generic chat model to consume, so it has a single `chat` property. The `chat` property is a function that takes an array of `ChatMessage` objects (the conversation so far) and returns a single `ChatMessage` object (the reply). The interface for the function that calls `/v1/chat/completions`, however, is a bit more complicated.
+The interface is meant to be simple for the generic chat model to consume, so it has a single `chat` property. The `chat` property is a function that takes an array of `ChatMessage` objects (the conversation so far) and returns a single `Consumable<ChatMessage>` object (the reply). The interface for the function that calls `/v1/chat/completions`, however, is a bit more complicated.
 
 ```ts
 export type OpenAiChatApi = (config: {
