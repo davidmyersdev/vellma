@@ -1,3 +1,6 @@
+[![Sponsor me](https://img.shields.io/badge/sponsor-DB61A2?style=for-the-badge&logo=GitHub-Sponsors&logoColor=white)](https://voracious.link/sponsor)
+[![Donate](https://img.shields.io/badge/donate-FF5F5F?style=for-the-badge&logo=ko-fi&logoColor=white)](https://voracious.link/donate)
+
 # `vellma` <!-- omit in toc -->
 
 Virtual, Eloquent LLM Assistants
