@@ -20,9 +20,68 @@ export type Consumable<T, Chunk = T> = T & {
 export type ConsumableMessage = Consumable<Message>
 export type ConsumableSource<T> = { generator: AsyncGenerator<T> | (() => AsyncGenerator<T>), stream?: undefined } | { generator?: undefined, stream: ReadableStream<T> }
 export type ConsumableUnknownSource<T> = Awaitable<AsyncGenerator<T> | (() => AsyncGenerator<T>) | ReadableStream<T> | (() => ReadableStream<T>)>
+export type Chainable<T> = T extends PromiseLike<infer U> ? U : T
+export type Flatten<T> = { [Key in keyof T]: T[Key] }
+export type Identity<T> = T
+
+export const chainable = <T extends object | Promise<object>>(input: T): Chainable<T> => {
+  const target = () => {}
+
+  Object.assign(target, input)
+  Object.setPrototypeOf(target, input)
+
+  // The `apply` trap only works for functions...
+  return new Proxy(target as Chainable<T>, {
+    // All function calls should return promises.
+    apply: (_target, _thisArg, args) => {
+      if ('then' in input) {
+        return input.then((result) => {
+          if (typeof result === 'function') {
+            return chainable(result(...args))
+          }
+        })
+      }
+
+      if (typeof input === 'function') {
+        return chainable(input(...args))
+      }
+    },
+    get: (_target, prop, _receiver) => {
+      if ('then' in input) {
+        if (prop === 'then') {
+          return input.then.bind(input)
+        }
+
+        return chainable(input.then((result) => {
+          if (isRecord(result)) {
+            return result[prop]
+          }
+        }))
+      }
+
+      if (isRecord(input)) {
+        const result = input[prop]
+
+        if (result && (typeof result === 'object' || typeof result === 'function')) {
+          return chainable(result)
+        }
+
+        return result
+      }
+    },
+  })
+}
 
 export const isConsumable = <T>(value: object): value is Consumable<T> => {
-  if (Object.hasOwn(value, Symbol.asyncIterator)) {
+  if (Symbol.asyncIterator in value) {
+    return true
+  }
+
+  return false
+}
+
+export const isRecord = <T extends Record<PropertyKey, unknown>>(value: object): value is T => {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
     return true
   }
 
@@ -30,7 +89,7 @@ export const isConsumable = <T>(value: object): value is Consumable<T> => {
 }
 
 export const isStream = <T>(value: object): value is ReadableStream<T> => {
-  if (Object.hasOwn(value, 'getReader') || Object.hasOwn(value, 'getWriter')) {
+  if ('getReader' in value) {
     return true
   }
 

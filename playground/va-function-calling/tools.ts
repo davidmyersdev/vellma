@@ -1,18 +1,27 @@
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { id } from 'vellma'
-import { jsonFileStorage, useStorage } from 'vellma/peripherals'
+import { jsonFileStorage, storageBucket, useStorage } from 'vellma/peripherals'
 import { tool } from 'vellma/tools'
+import { z } from 'zod'
 
-const thisDir = dirname(fileURLToPath(import.meta.url))
-const db = useStorage(jsonFileStorage(join(thisDir, 'events.json')))
+const db = useStorage(jsonFileStorage())
+
+export const eventSchema = storageBucket({
+  name: 'events',
+  attributes: z.object({
+    id: z.string(),
+    name: z.string(),
+    timestamp: z.string(),
+    description: z.string().optional(),
+  }),
+})
 
 export const tools = [
   tool({
     handler: async (args: { name: string, timestamp: string, description?: string }) => {
       const event = { ...args, id: id() }
+      const events = await db.bucket(eventSchema)
 
-      await db.set(event.id, event)
+      await events.save(event)
 
       return { event, success: true }
     },

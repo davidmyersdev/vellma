@@ -1,13 +1,15 @@
-import { type Message, id as makeId, messageFactory } from 'vellma'
+import { type Message, chainable, id, messageFactory, timestamp, zId, zJsonLike, zRole, zTimestamp } from 'vellma'
 import { type ChatIntegration } from 'vellma/integrations'
-import { type Peripherals, useLogger, useStorage } from 'vellma/peripherals'
+import { type Peripherals, storageBucket, useInMemoryStorage, useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
+import { z } from 'zod'
 import { type Model } from '..'
 
 export type ChatModel = Omit<Model, 'model'> & ReturnType<typeof useChat>
 
 export type ChatModelConfig = {
   integration: ChatIntegration,
+  chatId?: string,
   model?: string,
   peripherals?: Partial<Peripherals>,
   retries?: number,
@@ -15,32 +17,114 @@ export type ChatModelConfig = {
   tools?: Tool[],
 }
 
-export const useChat = ({ integration, model, peripherals = {}, retries = 2, toolToUse, tools = [] }: ChatModelConfig) => {
-  const id = makeId()
-  const { logger = useLogger(), storage = useStorage() } = peripherals
+export type ChatData = z.output<typeof chatSchema['attributes']>
+export type ChatMessageData = z.output<typeof chatMessageSchema['attributes']>
 
+export const chatSchema = storageBucket({
+  name: 'chats',
+  attributes: z.object({
+    id: zId.default(() => id()),
+    createdAt: zTimestamp.default(() => timestamp()),
+    updatedAt: zTimestamp.default(() => timestamp()),
+  }),
+})
+
+export const chatMessageSchema = storageBucket({
+  name: 'chatMessages',
+  attributes: z.object({
+    id: zId.default(() => id()),
+    chatId: zId.optional(),
+    userId: z.string().optional(),
+    function: z.object({
+      args: zJsonLike.or(z.string()),
+      // Todo: Maybe enum the function list?
+      name: z.string(),
+    }).optional(),
+    name: z.string().optional(),
+    role: zRole,
+    text: z.string().optional().default(''),
+    textDelta: z.string().optional().default(''),
+    createdAt: zTimestamp.default(() => timestamp()),
+    updatedAt: zTimestamp.default(() => timestamp()),
+  }),
+})
+
+export const useChat = (config: ChatModelConfig) => {
+  const { integration, chatId = id(), model, peripherals = {}, retries = 2, toolToUse, tools = [] } = config
+  const { logger = useLogger(), storage = useInMemoryStorage() } = peripherals
+
+  const chats = chainable(storage.bucket(chatSchema))
+  const chatMessages = chainable(chats.find({ id: chatId }).then((result) => {
+    return Promise.resolve(result || chats.save({ id: chatId, createdAt: new Date(), updatedAt: new Date() })).then(() => storage.bucket(chatMessageSchema))
+  }))
+
+  // Todo: Rename to something more suitable such as `merge`, `sync`, or `hydrate`.
   const add = async (...messages: Message[]) => {
-    await storage.set(id, [...await get(id), ...messages])
+    for (const message of messages) {
+      await chatMessages.save({ ...message, chatId, updatedAt: timestamp() })
+    }
   }
 
-  const set = async (message: Message) => {
-    const messages = await get(id)
-    const foundIndex = messages.findIndex(m => m.id === message.id)
+  const attemptGenerate = async function* (): AsyncGenerator<Message> {
+    const messages = await chatMessages.where({ chatId })
+    const orderedMessages = messages.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    const reply = await integration.chat(orderedMessages, { model, peripherals, toolToUse, tools })
 
-    if (foundIndex >= 0) {
-      const updated = messages.map((item, index) => index === foundIndex ? message : item)
+    for await (const chunk of reply) {
+      await add(chunk)
 
-      return await storage.set(id, updated)
+      if (chunk.function) {
+        // Todo: Yield a status update message.
+        const fullMessage = await reply.get()
+
+        if (fullMessage.function) {
+          yield* handleTools(fullMessage.function)
+        }
+      }
+
+      yield chunk
+    }
+  }
+
+  const generate = async function* (...messages: Message[]) {
+    await add(...messages)
+
+    const errors = [] as any[]
+
+    // Initial attempt.
+    try {
+      return yield* attemptGenerate()
+    } catch (error) {
+      errors.push(error)
+      await logger.error({ message: `[models][chat] An error occurred:`, error: error as Record<string, string> })
     }
 
-    await storage.set(id, [...await get(id), message])
+    // Reattempt as many times as is allowed.
+    for (let i = 0; i < retries; i++) try {
+      await logger.debug(`[models][chat] Reattempting to generate message... (${i + 1}/${retries})`)
+
+      return yield* attemptGenerate()
+    } catch (error) {
+      errors.push(error)
+      await logger.error({ message: `[models][chat] An error occurred:`, error: error as Record<string, string> })
+    }
+
+    // Throw errors
+    throw errors.at(-1)
+
+    // throw new Error('[models][chat] exceeded maximum retries.')
   }
 
   // Todo: Make function behavior configurable. Users should have the ability to control whether a function retries or
   // not, how many times it retries, and whether or not special handling should be incorporated for the response.
-  const getFnResult = async (tool: Tool, toolArgsJson: string) => {
+  const getToolResult = async (tool: Tool, toolArgsJson: string) => {
     try {
-      const args = JSON.parse(toolArgsJson)
+      let args = JSON.parse(toolArgsJson)
+
+      // Todo: Figure out how to handle scenarios where args are a JSON-encoded string of JSON.
+      while (typeof args !== 'object') {
+        args = JSON.parse(args)
+      }
 
       return await tool.handler(args)
     } catch (error: unknown) {
@@ -60,7 +144,7 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     }
 
     const args = fnCall.args as string
-    const functionResult = await getFnResult(tool, args)
+    const functionResult = await getToolResult(tool, args)
     const functionMessage = messageFactory.function({ name: tool.schema.name, text: JSON.stringify(functionResult, null, 2) })
 
     await add(functionMessage)
@@ -68,73 +152,12 @@ export const useChat = ({ integration, model, peripherals = {}, retries = 2, too
     yield* attemptGenerate()
   }
 
-  const attemptGenerate = async function* (): AsyncGenerator<Message> {
-    const messages = await get(id)
-    const reply = await integration.chat(messages, { model, peripherals, toolToUse, tools })
-
-    for await (const chunk of reply) {
-      await set(chunk)
-
-      if (chunk.function) {
-        // Todo: Yield a status update message.
-        const fullMessage = await reply.get()
-
-        if (fullMessage.function) {
-          yield* handleTools(fullMessage.function)
-        }
-      }
-
-      yield chunk
-    }
-  }
-
-  const clear = async () => {
-    await storage.remove(id)
-  }
-
-  const generate = async function* (...messages: Message[]) {
-    await add(...messages)
-
-    // Initial attempt.
-    try {
-      return yield* attemptGenerate()
-    } catch (error) {
-      await logger.error(`[models][chat] An error occurred: ${String(error)}`)
-    }
-
-    // Reattempt as many times as is allowed.
-    for (let i = 0; i < retries; i++) try {
-      await logger.debug(`[models][chat] Reattempting to generate message... (${i + 1}/${retries})`)
-
-      return yield* attemptGenerate()
-    } catch (error) {
-      await logger.error(`[models][chat] An error occurred: ${String(error)}`)
-    }
-
-    throw new Error('[models][chat] exceeded maximum retries.')
-  }
-
-  const get = async (id: string) => {
-    return await storage.get<string, Message[]>(id, [])
-  }
-
-  const history = async () => {
-    return [...await get(id)]
-  }
-
-  const hydrate = async (messages: Message[]) => {
-    await storage.set(id, messages)
-  }
-
   return {
-    id,
+    chatId,
     factory: messageFactory,
     model: {
       add,
-      clear,
       generate,
-      history,
-      hydrate,
     },
   }
 }

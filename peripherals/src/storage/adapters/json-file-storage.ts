@@ -1,56 +1,77 @@
-import { withDefaults } from '..'
+import { type StorageAdapter, type StorageBucketOutput } from '..'
 
-export const jsonFileStorage = (path = `./tmp/storage-${Date.now()}.json`) => {
-  const readStore = async () => {
-    const { readFileSync } = await import('node:fs')
+export type JsonFileStore = Record<string, Record<string, StorageBucketOutput>>
 
-    try {
-      const file = readFileSync(path, 'utf-8')
-
-      return JSON.parse(file)
-    } catch (_error) {
-      return {}
-    }
+export const jsonFileStorage = (path = `./tmp/storage-${Date.now()}.json`): StorageAdapter => {
+  const isMatch = <A extends Record<string, unknown>, D extends Record<string, unknown>>(attributes: A, data: D) => {
+    return Object.entries(attributes).every(([key, value]) => {
+      return data[key] === value
+    })
   }
 
-  const writeStore = async (store: unknown) => {
-    const { writeFileSync } = await import('node:fs')
-    const jsonString = JSON.stringify(store, null, 2)
+  return {
+    bucket: async ({ name }) => {
+      const { readFileSync, writeFileSync } = await import('node:fs')
 
-    writeFileSync(path, `${jsonString}\n`)
-  }
+      const bucket = () => {
+        return store()[name] || {}
+      }
 
-  return withDefaults({
-    each: async (callback) => {
-      const store = await readStore()
-      const keys = Object.keys(store)
+      const store = (): JsonFileStore => {
+        try {
+          const file = readFileSync(path, 'utf-8')
 
-      for (const key of keys) {
-        const step = await callback(key as any, store[key])
-
-        if (step?.break) {
-          break
+          return JSON.parse(file)
+        } catch (_error) {
+          return {}
         }
       }
+
+      const write = (bucketData: unknown) => {
+        const jsonString = JSON.stringify({ ...store(), [name]: bucketData }, null, 2)
+
+        writeFileSync(path, `${jsonString}\n`)
+      }
+
+      return {
+        all: async () => {
+          const bucketData = bucket()
+
+          return Object.values(bucketData)
+        },
+        destroy: async (attributes) => {
+          const bucketData = bucket()
+
+          for (const data of Object.values(bucketData)) {
+            if (isMatch(attributes, data)) {
+              delete bucketData[data.id]
+            }
+          }
+
+          write(bucketData)
+        },
+        find: async (attributes) => {
+          const bucketData = bucket()
+
+          return Object.values(bucketData).find((data) => {
+            return isMatch(attributes, data)
+          })
+        },
+        save: async (attributes) => {
+          const bucketData = bucket()
+
+          bucketData[attributes.id] = { ...bucketData[attributes.id], ...attributes }
+
+          write(bucketData)
+        },
+        where: async (attributes) => {
+          const bucketData = bucket()
+
+          return Object.values(bucketData).filter((data) => {
+            return isMatch(attributes, data)
+          })
+        },
+      }
     },
-    get: async (key) => {
-      const store = await readStore()
-
-      return store[key as string]
-    },
-    remove: async (key) => {
-      const store = await readStore()
-
-      delete store[key as string]
-
-      await writeStore(store)
-    },
-    set: async (key, data) => {
-      const store = await readStore()
-
-      store[key as string] = data
-
-      await writeStore(store)
-    },
-  })
+  }
 }

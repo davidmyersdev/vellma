@@ -12,6 +12,7 @@ export const zVector = z.object({
   createdAt: zTimestamp.default(() => timestamp()),
   embedding: zEmbedding,
   embeddingSource: z.string(),
+  hash: z.string(),
   modelId: z.string(),
 })
 

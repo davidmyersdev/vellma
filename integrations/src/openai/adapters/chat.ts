@@ -107,7 +107,7 @@ const streamDataParser = ({ logger = useLogger() }: Partial<Peripherals> = {}) =
           controller.enqueue(dataChunk)
         } catch (error) {
           if (maybeJson !== dataChunkDoneValue) {
-            await logger.error(`[integrations][openai][chat] error:\n${String(error)}`)
+            await logger.error(`[integrations][openai][chat] error:\n${JSON.stringify(error, null, 2)}`)
           }
         }
       }

@@ -1,26 +1,53 @@
-import { type StorageAdapter, withDefaults } from '..'
+import { type StorageAdapter, type StorageBucketAttributes, type StorageBucketOutput, type StorageBucketSchema } from '..'
+
+export type InMemoryStore = Record<string, Record<string, StorageBucketOutput>>
 
 export const inMemoryStorage = (): StorageAdapter => {
-  const store = new Map<any, any>()
+  const store: InMemoryStore = {}
 
-  return withDefaults({
-    each: async (callback) => {
-      for (const key of store.keys()) {
-        const step = await callback(key as any, store.get(key))
+  const findOrCreateBucket = <T extends StorageBucketAttributes>({ name }: StorageBucketSchema<T>): Record<string, StorageBucketOutput<T>> => {
+    if (!(name in store)) {
+      store[name] = {}
+    }
 
-        if (step?.break) {
-          break
-        }
+    return store[name]
+  }
+
+  const isMatch = <A extends Record<string, unknown>, D extends Record<string, unknown>>(attributes: A, data: D) => {
+    return Object.entries(attributes).every(([key, value]) => {
+      return data[key] === value
+    })
+  }
+
+  return {
+    bucket: async (bucketSchema) => {
+      const bucket = findOrCreateBucket(bucketSchema)
+
+      return {
+        all: async () => {
+          return Object.values(bucket)
+        },
+        destroy: async (attributes) => {
+          for (const data of Object.values(bucket)) {
+            if (isMatch(attributes, data)) {
+              delete bucket[data.id]
+            }
+          }
+        },
+        find: async (attributes) => {
+          return Object.values(bucket).find((data) => {
+            return isMatch(attributes, data)
+          })
+        },
+        save: async (attributes) => {
+          bucket[attributes.id] = { ...bucket[attributes.id], ...attributes }
+        },
+        where: async (attributes) => {
+          return Object.values(bucket).filter((data) => {
+            return isMatch(attributes, data)
+          })
+        },
       }
     },
-    get: async <Key = unknown, Data = unknown>(key: Key): Promise<Data> => {
-      return store.get(key)
-    },
-    remove: async <Key = unknown>(key: Key) => {
-      store.delete(key)
-    },
-    set: async <Key = unknown, Data = unknown>(key: Key, data: Data) => {
-      store.set(key, data)
-    },
-  })
+  }
 }

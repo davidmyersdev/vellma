@@ -1,5 +1,6 @@
-import { type Vector, id as makeId } from 'vellma'
-import { type Peripherals, useCrypto, useStorage } from 'vellma/peripherals'
+import { type Vector, chainable, id as makeId, zVector } from 'vellma'
+import { type Peripherals, storageBucket, useCrypto, useInMemoryStorage } from 'vellma/peripherals'
+import { type z } from 'zod'
 import { type Model } from '..'
 
 export type EmbeddingIntegration = {
@@ -13,15 +14,22 @@ export type EmbeddingModelConfig = {
   peripherals?: Partial<Peripherals>,
 }
 
+export type EmbeddingData = z.output<typeof embeddingSchema['attributes']>
+
+export const embeddingSchema = storageBucket({
+  name: 'embeddings',
+  attributes: zVector,
+})
+
 export const useEmbedding = ({ integration, peripherals = {} }: EmbeddingModelConfig) => {
   const id = makeId()
-  const { crypto = useCrypto(), storage = useStorage() } = peripherals
+  const { crypto = useCrypto(), storage = useInMemoryStorage() } = peripherals
+  const embeddings = chainable(storage.bucket(embeddingSchema))
 
   const generate = async (text: string) => {
     // Todo: Use the modelId as well as the text to generate a hash.
     const hash = await crypto.hash('SHA-512', text)
-    const storageKey = `embedding:${hash}`
-    const storedVector = await storage.get<string, Vector>(storageKey)
+    const storedVector = await embeddings.find({ hash })
 
     if (storedVector) {
       return storedVector
@@ -29,7 +37,7 @@ export const useEmbedding = ({ integration, peripherals = {} }: EmbeddingModelCo
 
     const vector = await integration.embedding(text)
 
-    await storage.set(storageKey, vector)
+    await embeddings.save({ ...vector, hash })
 
     return vector
   }
