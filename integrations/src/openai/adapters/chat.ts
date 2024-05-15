@@ -10,6 +10,7 @@ export type ApiChatConfig = ApiConfig & {
   functions?: JsonLike[],
   model?: ApiChatModel,
 }
+
 export type ApiChatResponse = ApiResponse<CreateChatCompletionResponse>
 export type ApiChatResponseData = CreateChatCompletionResponse
 
@@ -41,8 +42,23 @@ export type AdapterChatConfig = Omit<ApiChatConfig, 'functions' | 'messages'> & 
 }
 
 const toMessage = (message: ChatMessage): ApiChatMessage => {
+  const images = message.attachments?.filter(attachment => attachment.type === 'image').map((attachment) => {
+    return {
+      type: 'image_url',
+      image_url: {
+        url: attachment.url,
+      },
+    } as const
+  }) ?? []
+
   return {
-    content: message.text,
+    content: [
+      {
+        type: 'text',
+        text: message.text,
+      },
+      ...images,
+    ],
     function_call: message.function
       ? {
           arguments: JSON.stringify(message.function.args, null, 2),

@@ -13,6 +13,12 @@ export const zMessage = z.object({
   id: zId.default(() => id()),
   chatId: zId.optional(),
   userId: z.string().optional(),
+  attachments: z.array(
+    z.object({
+      type: z.literal('image'),
+      url: z.string(),
+    }),
+  ).optional(),
   function: z.object({
     args: zJsonLike.or(z.string()),
     // Todo: Maybe enum the function list?
