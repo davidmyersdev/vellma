@@ -101,6 +101,7 @@
     "lint:fix": "eslint --fix .",
     "playground:code-runner": "vite-node ./playground/code-runner/index.ts",
     "playground:docs-qa": "vite-node ./playground/docs-qa/index.ts",
+    "playground:api:models": "vite-node ./playground/api/models.ts",
     "playground:simple-chat": "vite-node ./playground/simple-chat/index.ts",
     "playground:simple-completion": "vite-node ./playground/simple-completion/index.ts",
     "playground:simple-embedding": "vite-node ./playground/simple-embedding/index.ts",
