@@ -1,4 +1,4 @@
-import { type ChatMessage, chainable, id, messageFactory, timestamp, zId, zJsonLike, zRole, zTimestamp } from 'vellma'
+import { type ChatMessage, chainable, id, messageFactory, timestamp, zId, zMessage, zTimestamp } from 'vellma'
 import { type ChatIntegration } from 'vellma/integrations'
 import { type Peripherals, storageBucket, useInMemoryStorage, useLogger } from 'vellma/peripherals'
 import { type Tool } from 'vellma/tools'
@@ -31,22 +31,7 @@ export const chatSchema = storageBucket({
 
 export const chatMessageSchema = storageBucket({
   name: 'chatMessages',
-  attributes: z.object({
-    id: zId.default(() => id()),
-    chatId: zId.optional(),
-    userId: z.string().optional(),
-    function: z.object({
-      args: zJsonLike.or(z.string()),
-      // Todo: Maybe enum the function list?
-      name: z.string(),
-    }).optional(),
-    name: z.string().optional(),
-    role: zRole,
-    text: z.string().optional().default(''),
-    textDelta: z.string().optional().default(''),
-    createdAt: zTimestamp.default(() => timestamp()),
-    updatedAt: zTimestamp.default(() => timestamp()),
-  }),
+  attributes: zMessage,
 })
 
 export const useChat = (config: ChatModelConfig) => {
