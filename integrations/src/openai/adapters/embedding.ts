@@ -8,11 +8,12 @@ export type EmbeddingConfig = Omit<ApiEmbeddingConfig, 'input' | 'user'> & {
 
 export const embedding = async (config: EmbeddingConfig) => {
   const { text: input, userId: user } = config
-  const { json: { data: [{ embedding }] } } = await embeddingApi({ ...config, input, user })
+  const { json: { data: [{ embedding }], model } } = await embeddingApi({ ...config, input, user })
 
   return vector({
+    // Todo: Add hash...
     embedding,
     embeddingSource: input,
-    modelId: config.model ?? 'text-embedding-ada-002',
+    modelId: model,
   })
 }
