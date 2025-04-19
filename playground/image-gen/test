@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+apiToken="$OPENAI_API_KEY"
+model='dall-e-3'
+n='1'
+prompt="$1"
+size='1024x1024'
+data='{"model": "'"$model"'","n": '"$n"',"prompt": "'"$prompt"'","size": "'"$size"'"}'
+
+function generate_image() {
+  curl https://api.openai.com/v1/images/generations \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer $apiToken" \
+    -d "$data"
+}
+
+unique_name="image-$(gdate +%s%3N)"
+
+echo "$data" | jq . > ${unique_name}-request.json
+
+generate_image | jq . > ${unique_name}-response.json
+
+cat ${unique_name}-response.json | jq '.data[0].url' | xargs -n 1 -J {} curl {} > ${unique_name}.png

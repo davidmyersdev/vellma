@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+apiToken="$OPENAI_API_KEY"
+filename="$1"
+model='dall-e-2'
+n='1'
+prompt="$2"
+size='256x256'
+
+function generate_image() {
+  curl https://api.openai.com/v1/images/edits \
+    -H "Authorization: Bearer $apiToken" \
+    -F image="@$filename" \
+    -F model="$model" \
+    -F n=$n \
+    -F prompt="$prompt" \
+    -F size="$size"
+}
+
+unique_name="image-edit-$(gdate +%s%3N)"
+
+generate_image | jq . > ${unique_name}-response.json
+
+cat ${unique_name}-response.json | jq '.data[0].url' | xargs -n 1 -J {} curl {} > ${unique_name}.png
