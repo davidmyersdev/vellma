@@ -11,15 +11,15 @@ export const jsonFileStorage = (path = `./tmp/storage-${Date.now()}.json`): Stor
 
   return {
     bucket: async ({ name }) => {
-      const { readFileSync, writeFileSync } = await import('node:fs')
+      const { readFile, writeFile } = await import('node:fs/promises')
 
-      const bucket = () => {
-        return store()[name] || {}
+      const bucket = async () => {
+        return (await store())[name] || {}
       }
 
-      const store = (): JsonFileStore => {
+      const store = async (): Promise<JsonFileStore> => {
         try {
-          const file = readFileSync(path, 'utf-8')
+          const file = await readFile(path, 'utf-8')
 
           return JSON.parse(file)
         } catch (_error) {
@@ -27,20 +27,20 @@ export const jsonFileStorage = (path = `./tmp/storage-${Date.now()}.json`): Stor
         }
       }
 
-      const write = (bucketData: unknown) => {
+      const write = async (bucketData: unknown) => {
         const jsonString = JSON.stringify({ ...store(), [name]: bucketData }, null, 2)
 
-        writeFileSync(path, `${jsonString}\n`)
+        await writeFile(path, `${jsonString}\n`)
       }
 
       return {
         all: async () => {
-          const bucketData = bucket()
+          const bucketData = await bucket()
 
           return Object.values(bucketData)
         },
         destroy: async (attributes) => {
-          const bucketData = bucket()
+          const bucketData = await bucket()
 
           for (const data of Object.values(bucketData)) {
             if (isMatch(attributes, data)) {
@@ -48,24 +48,24 @@ export const jsonFileStorage = (path = `./tmp/storage-${Date.now()}.json`): Stor
             }
           }
 
-          write(bucketData)
+          await write(bucketData)
         },
         find: async (attributes) => {
-          const bucketData = bucket()
+          const bucketData = await bucket()
 
           return Object.values(bucketData).find((data) => {
             return isMatch(attributes, data)
           })
         },
         save: async (attributes) => {
-          const bucketData = bucket()
+          const bucketData = await bucket()
 
           bucketData[attributes.id] = { ...bucketData[attributes.id], ...attributes }
 
-          write(bucketData)
+          await write(bucketData)
         },
         where: async (attributes) => {
-          const bucketData = bucket()
+          const bucketData = await bucket()
 
           return Object.values(bucketData).filter((data) => {
             return isMatch(attributes, data)
