@@ -163,7 +163,7 @@ export type ApiEmbeddingResponseData = CreateEmbeddingResponse
 
 export const embedding = async (config: ApiEmbeddingConfig) => {
   const api = apiClient(config)
-  const { input, model = 'text-embedding-ada-002', user } = config
+  const { input, model = 'text-embedding-3-small', user } = config
 
   const response = await api.post('/v1/embeddings', { body: { input, model, user } }) as ApiEmbeddingResponse
   const json = await response.json() as ApiEmbeddingResponseData
